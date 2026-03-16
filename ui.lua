@@ -465,7 +465,7 @@ local function buildUI(ctx)
     local wInfoLbl = Instance.new("TextLabel")
     wInfoLbl.Size = UDim2.new(1, 0, 0, 28)
     wInfoLbl.BackgroundTransparency = 1
-    wInfoLbl.Text = "ON = auto beli ulang setiap 30 detik"
+    wInfoLbl.Text = "AUTO = beli otomatis saat durasi habis"
     wInfoLbl.TextColor3 = Color3.fromRGB(140, 140, 140)
     wInfoLbl.Font = Enum.Font.Gotham
     wInfoLbl.TextSize = 10
@@ -473,9 +473,14 @@ local function buildUI(ctx)
     wInfoLbl.TextWrapped = true
     wInfoLbl.Parent = pg4
 
-    for _, weatherName in ipairs(WEATHER_LIST) do
+    for _, weatherInfo in ipairs(WEATHER_LIST) do
+        local weatherName = weatherInfo.Name or weatherInfo
+        local weatherPrice = weatherInfo.Price or 0
+        local weatherDur = weatherInfo.Duration or 900
+        local weatherDesc = weatherInfo.Desc or ""
+
         local row = Instance.new("Frame")
-        row.Size = UDim2.new(1, 0, 0, 32)
+        row.Size = UDim2.new(1, 0, 0, 40)
         row.BackgroundColor3 = Color3.fromRGB(32, 32, 46)
         row.BorderSizePixel = 0
         row.Parent = pg4
@@ -483,15 +488,27 @@ local function buildUI(ctx)
 
         -- Label nama cuaca
         local wLbl = Instance.new("TextLabel")
-        wLbl.Size = UDim2.new(0.5, 0, 1, 0)
-        wLbl.Position = UDim2.new(0, 10, 0, 0)
+        wLbl.Size = UDim2.new(0.45, 0, 0, 18)
+        wLbl.Position = UDim2.new(0, 10, 0, 2)
         wLbl.BackgroundTransparency = 1
         wLbl.Text = weatherName
         wLbl.TextColor3 = Color3.fromRGB(220, 220, 220)
-        wLbl.Font = Enum.Font.Gotham
+        wLbl.Font = Enum.Font.GothamBold
         wLbl.TextSize = 11
         wLbl.TextXAlignment = Enum.TextXAlignment.Left
         wLbl.Parent = row
+
+        -- Sub-label (harga + durasi)
+        local wSub = Instance.new("TextLabel")
+        wSub.Size = UDim2.new(0.45, 0, 0, 14)
+        wSub.Position = UDim2.new(0, 10, 0, 20)
+        wSub.BackgroundTransparency = 1
+        wSub.Text = tostring(weatherPrice) .. " coins | " .. tostring(weatherDur / 60) .. " min"
+        wSub.TextColor3 = Color3.fromRGB(100, 100, 120)
+        wSub.Font = Enum.Font.Gotham
+        wSub.TextSize = 9
+        wSub.TextXAlignment = Enum.TextXAlignment.Left
+        wSub.Parent = row
 
         -- Tombol Buy Now (sekali beli)
         local buyBtn = Instance.new("TextButton")
