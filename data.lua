@@ -517,4 +517,27 @@ DATA.SecretFishData = {
     ["Yellowfin Tuna"]                 = 86565235696991,
 }
 
+-- ── Weather Machine Data ─────────────────────────────────────
+-- Cuaca yang bisa dibeli + cek aktif otomatis via Replion + getupvalue
+-- Daftar dari UV 16 scan WeatherMachineController
+DATA.WEATHER_LIST = {
+    "Storm",
+    "Cloudy",
+    "Wind",
+    "Snow",
+    "Night",
+    "Day",
+    "Radiant",
+    "Increased Luck",
+    "Shark Hunt",
+    "Megalodon Hunt",
+    "Worm Hunt",
+    "Ghost Shark Hunt",
+    "Leviathan Hunt",
+    "Treasure Hunt",
+    "Sparkling Cove",
+    "Mutated",
+    "Present Rain",
+}
+
 return DATA
