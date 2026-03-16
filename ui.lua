@@ -512,7 +512,7 @@ local function buildUI(ctx)
                 buyBtn.BackgroundColor3 = Color3.fromRGB(60, 160, 80)
                 buyBtn.Text = "..."
                 local ok = ctx.buyWeatherOnce(weatherName)
-                buyBtn.Text = ok and "\u2713" or "X"
+                buyBtn.Text = ok and "OK" or "X"
                 buyBtn.BackgroundColor3 = ok
                     and Color3.fromRGB(40, 180, 80)
                     or  Color3.fromRGB(200, 50, 50)
