@@ -23,6 +23,8 @@ local function buildUI(ctx)
     local Players           = ctx.Players
     local FOCUS_FISH        = ctx.FOCUS_FISH
     local CRYSTALIZED_FISH  = ctx.CRYSTALIZED_FISH
+    local WEATHER_LIST      = ctx.WEATHER_LIST or {}
+    local AUTO_WEATHER      = ctx.AUTO_WEATHER_ENABLED or {}
 
     if cg:FindFirstChild("FishItUI") then cg.FishItUI:Destroy() end
 
@@ -256,7 +258,7 @@ local function buildUI(ctx)
     sep.Parent = panel
 
     -- ── Tab system ───────────────────────────────────────────
-    local TABS = { "Settings", "Focus", "Config" }
+    local TABS = { "Settings", "Focus", "Weather", "Config" }
     local tabFrames = {}
     local tabBtns   = {}
     local activeTab = nil
@@ -454,6 +456,104 @@ local function buildUI(ctx)
             refreshFocusList(); print("[FishIt] FOCUS_FISH tambah: " .. name)
         end
     end)
+
+    -- ── TAB: Weather (Auto Buy Weather) ──────────────────────
+    local pg4 = tabFrames["Weather"]
+    addSection(pg4, "Auto Buy Weather")
+
+    -- Info label
+    local wInfoLbl = Instance.new("TextLabel")
+    wInfoLbl.Size = UDim2.new(1, 0, 0, 28)
+    wInfoLbl.BackgroundTransparency = 1
+    wInfoLbl.Text = "ON = auto beli ulang setiap 30 detik"
+    wInfoLbl.TextColor3 = Color3.fromRGB(140, 140, 140)
+    wInfoLbl.Font = Enum.Font.Gotham
+    wInfoLbl.TextSize = 10
+    wInfoLbl.TextXAlignment = Enum.TextXAlignment.Left
+    wInfoLbl.TextWrapped = true
+    wInfoLbl.Parent = pg4
+
+    for _, weatherName in ipairs(WEATHER_LIST) do
+        local row = Instance.new("Frame")
+        row.Size = UDim2.new(1, 0, 0, 32)
+        row.BackgroundColor3 = Color3.fromRGB(32, 32, 46)
+        row.BorderSizePixel = 0
+        row.Parent = pg4
+        Instance.new("UICorner", row).CornerRadius = UDim.new(0, 6)
+
+        -- Label nama cuaca
+        local wLbl = Instance.new("TextLabel")
+        wLbl.Size = UDim2.new(0.5, 0, 1, 0)
+        wLbl.Position = UDim2.new(0, 10, 0, 0)
+        wLbl.BackgroundTransparency = 1
+        wLbl.Text = weatherName
+        wLbl.TextColor3 = Color3.fromRGB(220, 220, 220)
+        wLbl.Font = Enum.Font.Gotham
+        wLbl.TextSize = 11
+        wLbl.TextXAlignment = Enum.TextXAlignment.Left
+        wLbl.Parent = row
+
+        -- Tombol Buy Now (sekali beli)
+        local buyBtn = Instance.new("TextButton")
+        buyBtn.Size = UDim2.new(0, 36, 0, 20)
+        buyBtn.Position = UDim2.new(1, -95, 0.5, -10)
+        buyBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 200)
+        buyBtn.BorderSizePixel = 0
+        buyBtn.Text = "Buy"
+        buyBtn.TextColor3 = Color3.new(1, 1, 1)
+        buyBtn.Font = Enum.Font.GothamBold
+        buyBtn.TextSize = 9
+        buyBtn.AutoButtonColor = false
+        buyBtn.Parent = row
+        Instance.new("UICorner", buyBtn).CornerRadius = UDim.new(0, 4)
+
+        buyBtn.MouseButton1Click:Connect(function()
+            if ctx.buyWeatherOnce then
+                buyBtn.BackgroundColor3 = Color3.fromRGB(60, 160, 80)
+                buyBtn.Text = "..."
+                local ok = ctx.buyWeatherOnce(weatherName)
+                buyBtn.Text = ok and "\u2713" or "X"
+                buyBtn.BackgroundColor3 = ok
+                    and Color3.fromRGB(40, 180, 80)
+                    or  Color3.fromRGB(200, 50, 50)
+                task.delay(1.5, function()
+                    if buyBtn and buyBtn.Parent then
+                        buyBtn.Text = "Buy"
+                        buyBtn.BackgroundColor3 = Color3.fromRGB(40, 120, 200)
+                    end
+                end)
+            end
+        end)
+
+        -- Toggle Auto (ON/OFF)
+        local autoToggle = Instance.new("TextButton")
+        autoToggle.Size = UDim2.new(0, 44, 0, 20)
+        autoToggle.Position = UDim2.new(1, -50, 0.5, -10)
+        autoToggle.BorderSizePixel = 0
+        autoToggle.Font = Enum.Font.GothamBold
+        autoToggle.TextSize = 9
+        autoToggle.TextColor3 = Color3.new(1, 1, 1)
+        autoToggle.AutoButtonColor = false
+        autoToggle.Parent = row
+        Instance.new("UICorner", autoToggle).CornerRadius = UDim.new(1, 0)
+
+        local wState = AUTO_WEATHER[weatherName] or false
+        local function refreshW()
+            autoToggle.Text = wState and "AUTO" or "OFF"
+            autoToggle.BackgroundColor3 = wState
+                and Color3.fromRGB(40, 180, 80)
+                or  Color3.fromRGB(160, 50, 50)
+        end
+        refreshW()
+
+        autoToggle.MouseButton1Click:Connect(function()
+            wState = not wState
+            refreshW()
+            if ctx.setAutoWeather then
+                ctx.setAutoWeather(weatherName, wState)
+            end
+        end)
+    end
 
     -- ── TAB: Config (EDITABLE) ───────────────────────────────
     local pg3 = tabFrames["Config"]
