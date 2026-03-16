@@ -52,6 +52,15 @@ DATA.CRYSTALIZED_FISH = {
     "Blue Sea Dragon",
 }
 
+-- ── Mutations List ───────────────────────────────────────────
+-- Digunakan untuk menghapus prefix mutasi dan mendapatkan nama base ikan
+DATA.MUTATIONS = {
+    "Gold", "Corrupt", "Galaxy", "Albino", "Color Burn", "Fairy Dust", "Festive",
+    "Frozen", "Gemstone", "Stone", "Ghost", "Holographic", "Lightning", "Midnight",
+    "Radioactive", "Shiny", "Skeleton", "Big", "Phantom", "Crystalized", "Evolved",
+    "GALAXY", "MIDNIGHT", "STONE", "GEMSTONE"
+}
+
 -- ── Database Ikan (nama → assetId) ───────────────────────────
 -- Source: dump_fish.lua hasil dari in-game (452 ikan tier 4-8+)
 -- Tier di sini DIABAIKAN — yang dipakai adalah warna chat
