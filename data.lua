@@ -518,26 +518,15 @@ DATA.SecretFishData = {
 }
 
 -- ── Weather Machine Data ─────────────────────────────────────
--- Cuaca yang bisa dibeli + cek aktif otomatis via Replion + getupvalue
--- Daftar dari UV 16 scan WeatherMachineController
+-- Data cuaca dari game dump (ReplicatedStorage.Events)
+-- Duration dalam detik, Price dalam coins
 DATA.WEATHER_LIST = {
-    "Storm",
-    "Cloudy",
-    "Wind",
-    "Snow",
-    "Night",
-    "Day",
-    "Radiant",
-    "Increased Luck",
-    "Shark Hunt",
-    "Megalodon Hunt",
-    "Worm Hunt",
-    "Ghost Shark Hunt",
-    "Leviathan Hunt",
-    "Treasure Hunt",
-    "Sparkling Cove",
-    "Mutated",
-    "Present Rain",
+    { Name = "Cloudy",      Duration = 900,  Price = 20000,  Desc = "Increases luck (+0.2)" },
+    { Name = "Wind",        Duration = 900,  Price = 10000,  Desc = "Increases rod speed (+0.05)" },
+    { Name = "Snow",        Duration = 900,  Price = 15000,  Desc = "Adds Frozen mutations" },
+    { Name = "Storm",       Duration = 900,  Price = 35000,  Desc = "Luck +0.2, Speed +0.1" },
+    { Name = "Radiant",     Duration = 900,  Price = 50000,  Desc = "Increases shiny chance" },
+    { Name = "Shark Hunt",  Duration = 1800, Price = 300000, Desc = "Shark Hunt event" },
 }
 
 return DATA
