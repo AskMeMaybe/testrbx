@@ -58,7 +58,7 @@ DATA.MUTATIONS = {
     "Gold", "Corrupt", "Galaxy", "Albino", "Color Burn", "Fairy Dust", "Festive",
     "Frozen", "Gemstone", "Stone", "Ghost", "Holographic", "Lightning", "Midnight",
     "Radioactive", "Shiny", "Skeleton", "Big", "Phantom", "Crystalized", "Evolved",
-    "GALAXY", "MIDNIGHT", "STONE", "GEMSTONE"
+    "GALAXY", "MIDNIGHT", "STONE", "GEMSTONE", "Bloodmoon", "1x1x1x1", "Leviathan Rage", "Moon Fragment"
 }
 
 -- ── Database Ikan (nama → assetId) ───────────────────────────
