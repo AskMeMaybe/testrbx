@@ -258,7 +258,7 @@ local function buildUI(ctx)
     sep.Parent = panel
 
     -- ── Tab system ───────────────────────────────────────────
-    local TABS = { "Settings", "Focus", "Weather", "Server", "Config" }
+    local TABS = { "Settings", "Focus", "Weather", "Config" }
     local tabFrames = {}
     local tabBtns   = {}
     local activeTab = nil
@@ -386,15 +386,6 @@ local function buildUI(ctx)
     addToggle(pg, "Auto Sell", ctx.AUTO_SELL_ENABLED, function(v)
         ctx.setAutoSell(v)
     end)
-
-    addSection(pg, "Reconnect")
-    addToggle(pg, "Auto Rejoin", ctx.AUTO_REJOIN_ENABLED or true, function(v)
-        ctx.setAutoRejoin(v)
-    end)
-    addToggle(pg, "Auto Execute", ctx.AUTO_EXECUTE_ENABLED or true, function(v)
-        ctx.setAutoExecute(v)
-    end)
-
     addSection(pg, "Status")
     local function sLbl(parent, text, color)
         local l = Instance.new("TextLabel")
@@ -407,12 +398,6 @@ local function buildUI(ctx)
     sLbl(pg, "● Chat hook: aktif ✓",                    Color3.fromRGB(100, 200, 100))
     sLbl(pg, "● MIN_TIER: " .. ctx.MIN_TIER,            Color3.fromRGB(150, 200, 255))
     sLbl(pg, "● Server: " .. #Players:GetPlayers() .. " player", Color3.fromRGB(200, 180, 100))
-    local psCode = ctx.PRIVATE_SERVER_CODE or ""
-    if psCode ~= "" then
-        sLbl(pg, "● Private Server: " .. psCode:sub(1, 10) .. "...", Color3.fromRGB(120, 220, 120))
-    else
-        sLbl(pg, "● Server Mode: Public", Color3.fromRGB(200, 180, 100))
-    end
 
     -- ── TAB: Focus Fish ──────────────────────────────────────
     local pg2 = tabFrames["Focus"]
@@ -589,167 +574,6 @@ local function buildUI(ctx)
             end
         end)
     end
-
-    -- ── TAB: Server (Private Server) ────────────────────────────
-    local pg5 = tabFrames["Server"]
-    addSection(pg5, "Private Server")
-
-    -- Info label
-    local svrInfoLbl = Instance.new("TextLabel")
-    svrInfoLbl.Size = UDim2.new(1, 0, 0, 36)
-    svrInfoLbl.BackgroundTransparency = 1
-    svrInfoLbl.Text = "Masukkan kode Private Server.\nJika kosong = join Public Server."
-    svrInfoLbl.TextColor3 = Color3.fromRGB(140, 140, 140)
-    svrInfoLbl.Font = Enum.Font.Gotham
-    svrInfoLbl.TextSize = 10
-    svrInfoLbl.TextXAlignment = Enum.TextXAlignment.Left
-    svrInfoLbl.TextWrapped = true
-    svrInfoLbl.Parent = pg5
-
-    -- Private Server Code input
-    local psRow = Instance.new("Frame")
-    psRow.Size = UDim2.new(1, 0, 0, 36)
-    psRow.BackgroundColor3 = Color3.fromRGB(32, 32, 46)
-    psRow.BorderSizePixel = 0
-    psRow.Parent = pg5
-    Instance.new("UICorner", psRow).CornerRadius = UDim.new(0, 6)
-
-    local psLabel = Instance.new("TextLabel")
-    psLabel.Size = UDim2.new(1, -8, 0, 14)
-    psLabel.Position = UDim2.new(0, 8, 0, 2)
-    psLabel.BackgroundTransparency = 1
-    psLabel.Text = "Server Code"
-    psLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-    psLabel.Font = Enum.Font.GothamBold
-    psLabel.TextSize = 9
-    psLabel.TextXAlignment = Enum.TextXAlignment.Left
-    psLabel.Parent = psRow
-
-    local psInput = Instance.new("TextBox")
-    psInput.Size = UDim2.new(1, -16, 0, 18)
-    psInput.Position = UDim2.new(0, 8, 0, 16)
-    psInput.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-    psInput.BorderSizePixel = 0
-    psInput.Text = ctx.PRIVATE_SERVER_CODE or ""
-    psInput.PlaceholderText = "paste private server code disini..."
-    psInput.TextColor3 = Color3.fromRGB(80, 180, 255)
-    psInput.PlaceholderColor3 = Color3.fromRGB(80, 80, 80)
-    psInput.Font = Enum.Font.GothamBold
-    psInput.TextSize = 10
-    psInput.ClearTextOnFocus = false
-    psInput.TextTruncate = Enum.TextTruncate.AtEnd
-    psInput.Parent = psRow
-    Instance.new("UICorner", psInput).CornerRadius = UDim.new(0, 4)
-
-    -- Button row for Apply/Clear
-    local psBtnRow = Instance.new("Frame")
-    psBtnRow.Size = UDim2.new(1, 0, 0, 30)
-    psBtnRow.BackgroundTransparency = 1
-    psBtnRow.Parent = pg5
-    local psBtnLayout = Instance.new("UIListLayout", psBtnRow)
-    psBtnLayout.FillDirection = Enum.FillDirection.Horizontal
-    psBtnLayout.Padding = UDim.new(0, 6)
-    psBtnLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
-
-    local psApplyBtn = Instance.new("TextButton")
-    psApplyBtn.Size = UDim2.new(0.48, 0, 1, 0)
-    psApplyBtn.BackgroundColor3 = Color3.fromRGB(40, 160, 80)
-    psApplyBtn.BorderSizePixel = 0
-    psApplyBtn.Text = "✓ Apply"
-    psApplyBtn.TextColor3 = Color3.new(1, 1, 1)
-    psApplyBtn.Font = Enum.Font.GothamBold
-    psApplyBtn.TextSize = 11
-    psApplyBtn.Parent = psBtnRow
-    Instance.new("UICorner", psApplyBtn).CornerRadius = UDim.new(0, 5)
-
-    local psClearBtn = Instance.new("TextButton")
-    psClearBtn.Size = UDim2.new(0.48, 0, 1, 0)
-    psClearBtn.BackgroundColor3 = Color3.fromRGB(180, 60, 50)
-    psClearBtn.BorderSizePixel = 0
-    psClearBtn.Text = "✕ Clear"
-    psClearBtn.TextColor3 = Color3.new(1, 1, 1)
-    psClearBtn.Font = Enum.Font.GothamBold
-    psClearBtn.TextSize = 11
-    psClearBtn.Parent = psBtnRow
-    Instance.new("UICorner", psClearBtn).CornerRadius = UDim.new(0, 5)
-
-    -- Status label
-    local psStatusLbl = Instance.new("TextLabel")
-    psStatusLbl.Size = UDim2.new(1, 0, 0, 18)
-    psStatusLbl.BackgroundTransparency = 1
-    psStatusLbl.Text = (ctx.PRIVATE_SERVER_CODE and ctx.PRIVATE_SERVER_CODE ~= "")
-        and "● Mode: Private Server" or "● Mode: Public Server"
-    psStatusLbl.TextColor3 = (ctx.PRIVATE_SERVER_CODE and ctx.PRIVATE_SERVER_CODE ~= "")
-        and Color3.fromRGB(80, 220, 120) or Color3.fromRGB(200, 180, 100)
-    psStatusLbl.Font = Enum.Font.GothamBold
-    psStatusLbl.TextSize = 10
-    psStatusLbl.TextXAlignment = Enum.TextXAlignment.Left
-    psStatusLbl.Parent = pg5
-
-    psApplyBtn.MouseButton1Click:Connect(function()
-        local code = psInput.Text:match("^%s*(.-)%s*$")
-        if code and code ~= "" then
-            if ctx.setPrivateServerCode then
-                ctx.setPrivateServerCode(code)
-            end
-            psApplyBtn.BackgroundColor3 = Color3.fromRGB(40, 200, 80)
-            psApplyBtn.Text = "✓ Saved!"
-            psStatusLbl.Text = "● Mode: Private Server"
-            psStatusLbl.TextColor3 = Color3.fromRGB(80, 220, 120)
-            task.delay(1.5, function()
-                if psApplyBtn and psApplyBtn.Parent then
-                    psApplyBtn.BackgroundColor3 = Color3.fromRGB(40, 160, 80)
-                    psApplyBtn.Text = "✓ Apply"
-                end
-            end)
-            print("[FishIt] Private Server Code applied")
-        else
-            psApplyBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-            psApplyBtn.Text = "✕ Empty!"
-            task.delay(1, function()
-                if psApplyBtn and psApplyBtn.Parent then
-                    psApplyBtn.BackgroundColor3 = Color3.fromRGB(40, 160, 80)
-                    psApplyBtn.Text = "✓ Apply"
-                end
-            end)
-        end
-    end)
-
-    psClearBtn.MouseButton1Click:Connect(function()
-        psInput.Text = ""
-        if ctx.setPrivateServerCode then
-            ctx.setPrivateServerCode("")
-        end
-        psClearBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
-        psClearBtn.Text = "Cleared"
-        psStatusLbl.Text = "● Mode: Public Server"
-        psStatusLbl.TextColor3 = Color3.fromRGB(200, 180, 100)
-        task.delay(1, function()
-            if psClearBtn and psClearBtn.Parent then
-                psClearBtn.BackgroundColor3 = Color3.fromRGB(180, 60, 50)
-                psClearBtn.Text = "✕ Clear"
-            end
-        end)
-        print("[FishIt] Private Server Code cleared")
-    end)
-
-    psInput.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            psApplyBtn.MouseButton1Click:Fire()
-        end
-    end)
-
-    addSection(pg5, "Info")
-    local svrHelpLbl = Instance.new("TextLabel")
-    svrHelpLbl.Size = UDim2.new(1, 0, 0, 56)
-    svrHelpLbl.BackgroundTransparency = 1
-    svrHelpLbl.Text = "Cara mendapatkan Private Server Code:\n1. Buka halaman Private Server di Roblox\n2. Copy link seperti: ...privateServerLinkCode=XXXXX\n3. Paste kode XXXXX di atas"
-    svrHelpLbl.TextColor3 = Color3.fromRGB(100, 100, 120)
-    svrHelpLbl.Font = Enum.Font.Gotham
-    svrHelpLbl.TextSize = 9
-    svrHelpLbl.TextXAlignment = Enum.TextXAlignment.Left
-    svrHelpLbl.TextWrapped = true
-    svrHelpLbl.Parent = pg5
 
     -- ── TAB: Config (EDITABLE) ───────────────────────────────
     local pg3 = tabFrames["Config"]
