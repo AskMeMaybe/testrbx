@@ -4,17 +4,6 @@
 -- Tab: Settings / Focus / Weather / Config
 -- Di-host di GitHub dan di-load oleh fishit_main.lua via loadstring
 -- ============================================================
--- Wajib return function buildUI(ctx) agar bisa dipanggil dari main
--- ctx = {
---   localPlayer, Players, MIN_TIER, ANTI_AFK_ENABLED,
---   AFK_NOTIFY_ENABLED, AFK_CHECK_INTERVAL, AFK_TIMEOUT,
---   DC_NOTIFY_ENABLED, DC_REJOIN_TIMEOUT, COOLDOWN,
---   FOCUS_FISH, CRYSTALIZED_FISH, WEATHER_LIST, AUTO_WEATHER_ENABLED,
---   AUTO_SELL_ENABLED, AUTO_SELL_INTERVAL,
---   startAntiAfk, setMinTier, setCooldown, setAfkCheck, setAfkTimeout,
---   setDcTimeout, setAntiAfk, setAfkNotify, setDcNotify,
---   setAutoSell, setSellInterval, setAutoWeather, buyWeatherOnce,
--- }
 
 local function buildUI(ctx)
     -- ── Load WindUI ─────────────────────────────────────────
@@ -36,24 +25,114 @@ local function buildUI(ctx)
 
     -- ── Buat Window ─────────────────────────────────────────
     local Window = WindUI:CreateWindow({
-        Title      = "FishIt Notifier",
-        Icon       = "fish",
-        Author     = "v6 | " .. localPlayer.Name,
-        Folder     = "FishItNotifier",
-        Size       = UDim2.fromOffset(560, 420),
-        MinSize    = Vector2.new(480, 350),
-        Transparent = true,
-        Theme      = "Dark",
-        Resizable  = true,
+        Title         = "THREEFASTER NOTIF",
+        Icon          = "fish",
+        Author        = "X8 | " .. localPlayer.Name,
+        Folder        = "ThreefasterNotif",
+        Size          = UDim2.fromOffset(580, 440),
+        MinSize       = Vector2.new(480, 350),
+        Transparent   = true,
+        Theme         = "Dark",
+        Resizable     = true,
         HideSearchBar = false,
     })
 
-    -- ╔══════════════════════════════════════════╗
-    -- ║  TAB 1: Settings                         ║
-    -- ╚══════════════════════════════════════════╝
+    -- ============================================================
+    -- ── BOOST TRACKER (LuckData via ReplicatedStorage Event) ──
+    -- ============================================================
+    local luckBoostRemaining = 0   -- detik tersisa (realtime)
+    local luckBoostAmount    = 0   -- multiplier (misal 8 = x8)
+    local luckBoostExpireAt  = 0   -- os.time() saat boost habis
+    local statusParagraph    = nil -- referensi paragraph untuk update
+
+    local function formatDuration(secs)
+        if secs <= 0 then return "Tidak aktif" end
+        local h = math.floor(secs / 3600)
+        local m = math.floor((secs % 3600) / 60)
+        local s = math.floor(secs % 60)
+        if h > 0 then
+            return string.format("%dj %02dm %02ds", h, m, s)
+        else
+            return string.format("%dm %02ds", m, s)
+        end
+    end
+
+    local function buildStatusDesc()
+        local remaining = math.max(0, luckBoostExpireAt - os.time())
+        local boostLine
+        if luckBoostAmount > 0 and remaining > 0 then
+            boostLine = "● Luck Boost: x" .. luckBoostAmount .. " | Sisa: " .. formatDuration(remaining)
+        elseif luckBoostAmount > 0 and remaining <= 0 then
+            boostLine = "● Luck Boost: Habis ✗"
+        else
+            boostLine = "● Luck Boost: Tidak aktif"
+        end
+
+        local plrCount = #Players:GetPlayers()
+        return "● Player: " .. localPlayer.Name
+            .. "\n● Chat hook: aktif ✓"
+            .. "\n● MIN_TIER: " .. tostring(ctx.MIN_TIER)
+            .. "\n● Server: " .. plrCount .. " player"
+            .. "\n" .. boostLine
+    end
+
+    -- ── Listen event LuckData dari ReplicatedStorage ─────────
+    task.spawn(function()
+        local ok2, Event = pcall(function()
+            -- path sesuai cobalt dump
+            return game:GetService("ReplicatedStorage")
+                .Packages._Index["ytrev_replion@2.0.0-rc.3"]
+                .replion.Remotes.Update
+        end)
+        if not ok2 or not Event then
+            warn("[FishIt] LuckData event tidak ditemukan, coba scan manual...")
+            -- Fallback: cari RemoteEvent bernama "Update" di dalam Replion
+            pcall(function()
+                local rs = game:GetService("ReplicatedStorage")
+                for _, pkg in ipairs(rs.Packages._Index:GetChildren()) do
+                    if pkg.Name:find("replion") then
+                        local rem = pkg:FindFirstChild("Remotes", true)
+                        if rem then
+                            local upd = rem:FindFirstChild("Update")
+                            if upd then Event = upd end
+                        end
+                    end
+                end
+            end)
+        end
+
+        if not Event then
+            warn("[FishIt] LuckData event tidak bisa ditemukan.")
+            return
+        end
+
+        Event.OnClientEvent:Connect(function(key, dataKey, data)
+            -- key="\x11", dataKey="LuckData", data={Remaining,Started,Amount}
+            if dataKey == "LuckData" and type(data) == "table" then
+                luckBoostAmount   = data.Amount   or 0
+                -- Remaining = total durasi dalam detik dari waktu Started
+                local started     = data.Started  or 0
+                local remaining   = data.Remaining or 0
+                luckBoostExpireAt = started + remaining
+                local sisa = math.max(0, luckBoostExpireAt - os.time())
+                print(string.format("[FishIt] LuckBoost x%d | Sisa: %s", luckBoostAmount, formatDuration(sisa)))
+
+                -- Update paragraph kalau sudah dibuat
+                if statusParagraph and statusParagraph.SetDesc then
+                    statusParagraph:SetDesc(buildStatusDesc())
+                end
+            end
+        end)
+
+        print("[FishIt] LuckData event terhubung ✓")
+    end)
+
+    -- ============================================================
+    -- TAB 1: Settings
+    -- ============================================================
     local TabSettings = Window:Tab({ Title = "Settings", Icon = "settings" })
 
-    -- ── Features ────────────────────────────────
+    -- ── Toggles ──────────────────────────────────
     TabSettings:Toggle({
         Title    = "Anti-AFK",
         Desc     = "Cegah kick AFK otomatis",
@@ -86,35 +165,46 @@ local function buildUI(ctx)
         Callback = function(state) ctx.setAutoSell(state) end,
     })
 
-    -- ── Status ──────────────────────────────────
-    TabSettings:Paragraph({
+    -- ── Status Server (dengan Luck Boost) ────────
+    -- Simpan referensi agar bisa di-update realtime
+    statusParagraph = TabSettings:Paragraph({
         Title = "Status Server",
-        Desc  = "● Player: " .. localPlayer.Name
-             .. "\n● Chat hook: aktif ✓"
-             .. "\n● MIN_TIER: " .. tostring(ctx.MIN_TIER)
-             .. "\n● Server: " .. #Players:GetPlayers() .. " player",
+        Desc  = buildStatusDesc(),
+        Icon  = "activity",
     })
 
-    -- ── Player List ─────────────────────────────
+    -- ── Loop update status setiap 30 detik ───────
+    task.spawn(function()
+        while true do
+            task.wait(30)
+            if statusParagraph and statusParagraph.SetDesc then
+                pcall(function()
+                    statusParagraph:SetDesc(buildStatusDesc())
+                end)
+            end
+        end
+    end)
+
+    -- ── Player List ──────────────────────────────
     local plrList = {}
     for _, p in ipairs(Players:GetPlayers()) do
         table.insert(plrList, p.Name)
     end
     TabSettings:Paragraph({
         Title = "Player Di Server",
-        Desc  = table.concat(plrList, " | "),
+        Desc  = #plrList > 0 and table.concat(plrList, " | ") or "(Kosong)",
+        Icon  = "users",
     })
 
-    -- ╔══════════════════════════════════════════╗
-    -- ║  TAB 2: Focus Fish                       ║
-    -- ╚══════════════════════════════════════════╝
+    -- ============================================================
+    -- TAB 2: Focus Fish
+    -- ============================================================
     local TabFocus = Window:Tab({ Title = "Focus", Icon = "target" })
 
-    -- Input untuk tambah ikan
-    local focusInput
-    focusInput = TabFocus:Input({
+    -- Input tambah ikan
+    TabFocus:Input({
         Title       = "Tambah Focus Fish",
-        Desc        = "Ikan ini akan selalu mengirim notif tanpa peduli tier",
+        Desc        = "Ikan ini selalu trigger notif tanpa peduli tier",
         Placeholder = "Nama ikan...",
         Icon        = "plus-circle",
         Callback    = function(name)
@@ -123,64 +213,56 @@ local function buildUI(ctx)
                 FOCUS_FISH[name] = true
                 print("[FishIt] FOCUS_FISH tambah: " .. name)
                 WindUI:Notify({
-                    Title    = "Focus Fish Ditambah",
-                    Content  = name .. " ditambahkan ke daftar Focus",
+                    Title   = "Focus Fish Ditambah",
+                    Content = name .. " ditambahkan ke daftar Focus",
                     Duration = 3,
-                    Icon     = "fish",
+                    Icon    = "fish",
                 })
             end
         end,
     })
 
-    -- Tombol refresh daftar
+    -- Tombol lihat daftar
     TabFocus:Button({
-        Title    = "Refresh Daftar Focus Fish",
-        Desc     = "Klik untuk memperbarui tampilan daftar ikan fokus",
-        Icon     = "refresh-cw",
+        Title    = "Lihat Daftar Focus Fish",
+        Desc     = "Tampilkan semua ikan yang di-focus",
+        Icon     = "list",
         Callback = function()
-            -- Re-build paragraph list
             local names = {}
             for fishName in pairs(FOCUS_FISH) do
                 table.insert(names, "● " .. fishName)
             end
-            if #names == 0 then
-                table.insert(names, "(Kosong)")
-            end
             table.sort(names)
             WindUI:Notify({
                 Title    = "Focus Fish (" .. #names .. ")",
-                Content  = table.concat(names, "\n"),
-                Duration = 5,
+                Content  = #names > 0 and table.concat(names, "\n") or "(Kosong)",
+                Duration = 6,
                 Icon     = "list",
             })
         end,
     })
 
-    -- Tampilkan daftar Focus Fish
+    -- Daftar focus fish (statis saat build)
     do
         local names = {}
         for fishName in pairs(FOCUS_FISH) do
             table.insert(names, "● " .. fishName)
         end
         table.sort(names)
-        if #names == 0 then names = { "(Kosong)" } end
-
         TabFocus:Paragraph({
-            Title = "Daftar Focus Fish",
-            Desc  = table.concat(names, "\n"),
+            Title = "Daftar Focus Fish (" .. #names .. ")",
+            Desc  = #names > 0 and table.concat(names, "\n") or "(Kosong)",
             Icon  = "fish",
         })
     end
 
-    -- Tombol hapus semua focus fish
+    -- Hapus semua
     TabFocus:Button({
         Title    = "Hapus Semua Focus Fish",
         Desc     = "Kosongkan seluruh daftar focus fish",
         Icon     = "trash-2",
         Callback = function()
-            for k in pairs(FOCUS_FISH) do
-                FOCUS_FISH[k] = nil
-            end
+            for k in pairs(FOCUS_FISH) do FOCUS_FISH[k] = nil end
             WindUI:Notify({
                 Title    = "Focus Fish Dikosongkan",
                 Content  = "Semua focus fish telah dihapus",
@@ -191,85 +273,138 @@ local function buildUI(ctx)
         end,
     })
 
-    -- ── Crystalized Fish Info ────────────────────
+    -- Crystalized Fish info
     TabFocus:Paragraph({
         Title = "Crystalized Fish (" .. #CRYSTALIZED_FISH .. ")",
-        Desc  = table.concat(CRYSTALIZED_FISH, "\n● ", 1) and
-                "● " .. table.concat(CRYSTALIZED_FISH, "\n● ") or "(Kosong)",
+        Desc  = #CRYSTALIZED_FISH > 0
+            and "● " .. table.concat(CRYSTALIZED_FISH, "\n● ")
+            or  "(Kosong)",
+        Icon  = "sparkles",
     })
 
-    -- ╔══════════════════════════════════════════╗
-    -- ║  TAB 3: Weather                          ║
-    -- ╚══════════════════════════════════════════╝
+    -- ============================================================
+    -- TAB 3: Weather
+    -- ============================================================
     local TabWeather = Window:Tab({ Title = "Weather", Icon = "cloud" })
 
-    TabWeather:Paragraph({
-        Title = "Auto Buy Weather",
-        Desc  = "AUTO = beli otomatis saat durasi cuaca habis\nBuy = beli sekali sekarang",
-    })
-
-    for _, weatherInfo in ipairs(WEATHER_LIST) do
-        local weatherName  = weatherInfo.Name or weatherInfo
-        local weatherPrice = weatherInfo.Price or 0
-        local weatherDur   = weatherInfo.Duration or 900
-        local weatherDesc  = weatherInfo.Desc or ""
-
-        -- Toggle Auto
-        TabWeather:Toggle({
-            Title    = weatherName .. " [AUTO]",
-            Desc     = tostring(weatherPrice) .. " coins | "
-                    .. tostring(weatherDur / 60) .. " mnt | " .. weatherDesc,
-            Icon     = "cloud-lightning",
-            Value    = AUTO_WEATHER[weatherName] or false,
-            Callback = function(state)
-                if ctx.setAutoWeather then
-                    ctx.setAutoWeather(weatherName, state)
-                end
-            end,
-        })
-
-        -- Tombol Buy Now
-        TabWeather:Button({
-            Title    = "Beli Sekarang: " .. weatherName,
-            Desc     = "Klik untuk beli " .. weatherName .. " satu kali",
-            Icon     = "shopping-bag",
-            Callback = function()
-                if ctx.buyWeatherOnce then
-                    local result = ctx.buyWeatherOnce(weatherName)
-                    WindUI:Notify({
-                        Title    = result and "Berhasil Beli!" or "Gagal Beli",
-                        Content  = result
-                            and (weatherName .. " berhasil dibeli!")
-                            or  (weatherName .. " gagal dibeli / masih aktif"),
-                        Duration = 3,
-                        Icon     = result and "check-circle" or "x-circle",
-                    })
-                end
-            end,
-        })
+    -- Build dropdown values: "Cloudy ($20.000)"
+    local weatherValues = {}
+    local weatherMap    = {}  -- label → weatherInfo
+    for _, w in ipairs(WEATHER_LIST) do
+        local wName  = w.Name or w
+        local wPrice = w.Price or 0
+        -- Format harga pakai titik sebagai pemisah ribuan
+        local priceStr = tostring(wPrice):reverse():gsub("(%d%d%d)", "%1."):reverse():gsub("^%.", "")
+        local label = wName .. " ($" .. priceStr .. ")"
+        table.insert(weatherValues, label)
+        weatherMap[label] = w
     end
 
-    -- ╔══════════════════════════════════════════╗
-    -- ║  TAB 4: Config                           ║
-    -- ╚══════════════════════════════════════════╝
+    local selectedWeatherLabel = nil
+
+    local weatherDropdown = TabWeather:Dropdown({
+        Title     = "Select Weather",
+        Desc      = "Pilih cuaca untuk dibeli atau di-auto",
+        Icon      = "cloud-sun",
+        Values    = weatherValues,
+        AllowNone = true,
+        Callback  = function(selected)
+            selectedWeatherLabel = selected
+        end,
+    })
+
+    -- Single toggle: Auto Buy Weather Events
+    TabWeather:Toggle({
+        Title    = "Auto Buy Weather Events",
+        Desc     = "Beli otomatis cuaca yang dipilih saat durasi habis",
+        Icon     = "repeat",
+        Value    = false,
+        Callback = function(state)
+            if not selectedWeatherLabel or selectedWeatherLabel == "" then
+                WindUI:Notify({
+                    Title    = "Pilih Cuaca Dulu!",
+                    Content  = "Silakan pilih cuaca dari dropdown sebelum mengaktifkan auto buy",
+                    Duration = 4,
+                    Icon     = "alert-triangle",
+                })
+                return
+            end
+            local info = weatherMap[selectedWeatherLabel]
+            if info and ctx.setAutoWeather then
+                local wName = info.Name or info
+                ctx.setAutoWeather(wName, state)
+                WindUI:Notify({
+                    Title    = state and ("Auto Buy ON: " .. wName) or ("Auto Buy OFF: " .. wName),
+                    Content  = state
+                        and (wName .. " akan dibeli otomatis saat habis")
+                        or  (wName .. " auto buy dihentikan"),
+                    Duration = 3,
+                    Icon     = state and "check-circle" or "x-circle",
+                })
+            end
+        end,
+    })
+
+    -- Tombol Buy Now (beli cuaca yang dipilih di dropdown)
+    TabWeather:Button({
+        Title    = "Buy Now",
+        Desc     = "Beli cuaca yang dipilih di dropdown sekali langsung",
+        Icon     = "shopping-bag",
+        Callback = function()
+            if not selectedWeatherLabel or selectedWeatherLabel == "" then
+                WindUI:Notify({
+                    Title    = "Pilih Cuaca Dulu!",
+                    Content  = "Pilih cuaca dari dropdown terlebih dahulu",
+                    Duration = 3,
+                    Icon     = "alert-triangle",
+                })
+                return
+            end
+            local info = weatherMap[selectedWeatherLabel]
+            if info and ctx.buyWeatherOnce then
+                local wName = info.Name or info
+                local result = ctx.buyWeatherOnce(wName)
+                WindUI:Notify({
+                    Title    = result and "Berhasil Beli!" or "Gagal Beli",
+                    Content  = result
+                        and (wName .. " berhasil dibeli!")
+                        or  (wName .. " gagal / masih aktif"),
+                    Duration = 3,
+                    Icon     = result and "check-circle" or "x-circle",
+                })
+            end
+        end,
+    })
+
+    -- Info cuaca aktif (yang auto-nya ON)
+    TabWeather:Paragraph({
+        Title = "Info",
+        Desc  = "Pilih cuaca dari dropdown, lalu toggle Auto Buy\n"
+             .. "atau klik Buy Now untuk beli langsung.\n"
+             .. "Auto Buy akan beli ulang saat durasi habis.",
+        Icon  = "info",
+    })
+
+    -- ============================================================
+    -- TAB 4: Config
+    -- ============================================================
     local TabConfig = Window:Tab({ Title = "Config", Icon = "sliders-horizontal" })
 
     TabConfig:Paragraph({
         Title = "Edit Konfigurasi",
-        Desc  = "Geser slider atau isi input lalu tekan Enter untuk apply",
+        Desc  = "Geser slider untuk mengubah nilai konfigurasi secara langsung",
+        Icon  = "settings-2",
     })
 
-    -- ── MIN_TIER Slider ──────────────────────────
     TabConfig:Slider({
         Title    = "MIN_TIER",
-        Desc     = "Tier minimum untuk notifikasi (4=Epic, 5=Legendary, 6=Mythic, 7=Secret, 8=Forgotten)",
+        Desc     = "4=Epic | 5=Legendary | 6=Mythic | 7=Secret | 8=Forgotten",
         Icon     = "layers",
         Step     = 1,
         Value    = { Min = 4, Max = 8, Default = ctx.MIN_TIER },
         Callback = function(v) ctx.setMinTier(v) end,
     })
 
-    -- ── Cooldown Slider ──────────────────────────
     TabConfig:Slider({
         Title    = "Cooldown (detik)",
         Desc     = "Jeda minimum antar notifikasi ikan",
@@ -279,7 +414,6 @@ local function buildUI(ctx)
         Callback = function(v) ctx.setCooldown(v) end,
     })
 
-    -- ── AFK Check Interval ───────────────────────
     TabConfig:Slider({
         Title    = "AFK Check Interval (menit)",
         Desc     = "Seberapa sering sistem mengecek AFK",
@@ -289,27 +423,24 @@ local function buildUI(ctx)
         Callback = function(v) ctx.setAfkCheck(v * 60) end,
     })
 
-    -- ── AFK Timeout ───────────────────────────────
     TabConfig:Slider({
         Title    = "AFK Timeout (menit)",
-        Desc     = "Berapa menit tidak aktif dianggap AFK",
+        Desc     = "Berapa menit tidak aktif sebelum dianggap AFK",
         Icon     = "user-x",
         Step     = 1,
         Value    = { Min = 1, Max = 60, Default = math.floor(ctx.AFK_TIMEOUT / 60) },
         Callback = function(v) ctx.setAfkTimeout(v * 60) end,
     })
 
-    -- ── DC Timeout ────────────────────────────────
     TabConfig:Slider({
         Title    = "DC Timeout (menit)",
-        Desc     = "Berapa menit setelah keluar baru dikirim notif DC",
+        Desc     = "Berapa menit setelah keluar baru notif DC dikirim",
         Icon     = "wifi-off",
         Step     = 1,
         Value    = { Min = 1, Max = 30, Default = math.floor(ctx.DC_REJOIN_TIMEOUT / 60) },
         Callback = function(v) ctx.setDcTimeout(v * 60) end,
     })
 
-    -- ── Auto Sell Interval ────────────────────────
     TabConfig:Slider({
         Title    = "Auto Sell Interval (detik)",
         Desc     = "Seberapa sering auto sell berjalan",
@@ -319,7 +450,7 @@ local function buildUI(ctx)
         Callback = function(v) ctx.setSellInterval(v) end,
     })
 
-    -- ── Info Stats ────────────────────────────────
+    -- ── Statistik ────────────────────────────────
     local focusCount = 0
     for _ in pairs(FOCUS_FISH) do focusCount = focusCount + 1 end
 
@@ -330,16 +461,16 @@ local function buildUI(ctx)
              .. "\n● VPS: aktif"
              .. "\n● MIN_TIER: " .. ctx.MIN_TIER
              .. "\n● Cooldown: " .. ctx.COOLDOWN .. " detik",
+        Icon  = "bar-chart-2",
     })
 
-    -- ── Debug / Manual Actions ─────────────────────
     TabConfig:Button({
         Title    = "Test Notifikasi",
-        Desc     = "Kirim notif test ke UI",
+        Desc     = "Kirim notif test ke layar",
         Icon     = "bell-ring",
         Callback = function()
             WindUI:Notify({
-                Title    = "FishIt Test",
+                Title    = "THREEFASTER NOTIF X8",
                 Content  = "Sistem berjalan normal ✓",
                 Duration = 4,
                 Icon     = "check-circle",
@@ -347,9 +478,10 @@ local function buildUI(ctx)
         end,
     })
 
+    -- ── Aktifkan tab Settings duluan ─────────────
     TabSettings:Select()
 
-    print("[FishIt] WindUI berhasil dibangun")
+    print("[FishIt] WindUI (THREEFASTER NOTIF X8) berhasil dibangun")
 end
 
 return buildUI
