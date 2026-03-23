@@ -24,11 +24,13 @@ local function buildUI(ctx)
     local AUTO_WEATHER     = ctx.AUTO_WEATHER_ENABLED or {}
 
     -- ── Buat Window ─────────────────────────────────────────
+    -- Title = "THREEFASTER" → ini yang muncul saat diminimize
+    -- Author = "NOTIF X8 | Player" → muncul di header bawah title
+    -- Folder tidak diset → agar WindUI tidak load config lama (anti-AFK dsb)
     local Window = WindUI:CreateWindow({
-        Title         = "THREEFASTER NOTIF",
+        Title         = "THREEFASTER",
         Icon          = "fish",
-        Author        = "X8 | " .. localPlayer.Name,
-        Folder        = "ThreefasterNotif",
+        Author        = "NOTIF X8 | " .. localPlayer.Name,
         Size          = UDim2.fromOffset(580, 440),
         MinSize       = Vector2.new(480, 350),
         Transparent   = true,
@@ -38,15 +40,15 @@ local function buildUI(ctx)
     })
 
     -- ============================================================
-    -- ── BOOST TRACKER (LuckData via ReplicatedStorage Event) ──
+    -- ── LUCK BOOST TRACKER ──────────────────────────────────────
+    -- Membaca LuckData dari ReplicatedStorage Replion event
     -- ============================================================
-    local luckBoostRemaining = 0   -- detik tersisa (realtime)
-    local luckBoostAmount    = 0   -- multiplier (misal 8 = x8)
-    local luckBoostExpireAt  = 0   -- os.time() saat boost habis
-    local statusParagraph    = nil -- referensi paragraph untuk update
+    local luckBoostAmount   = 0
+    local luckBoostExpireAt = 0
+    local statusParagraph   = nil
 
     local function formatDuration(secs)
-        if secs <= 0 then return "Tidak aktif" end
+        if secs <= 0 then return "Habis" end
         local h = math.floor(secs / 3600)
         local m = math.floor((secs % 3600) / 60)
         local s = math.floor(secs % 60)
@@ -62,68 +64,56 @@ local function buildUI(ctx)
         local boostLine
         if luckBoostAmount > 0 and remaining > 0 then
             boostLine = "● Luck Boost: x" .. luckBoostAmount .. " | Sisa: " .. formatDuration(remaining)
-        elseif luckBoostAmount > 0 and remaining <= 0 then
+        elseif luckBoostAmount > 0 then
             boostLine = "● Luck Boost: Habis ✗"
         else
             boostLine = "● Luck Boost: Tidak aktif"
         end
-
-        local plrCount = #Players:GetPlayers()
         return "● Player: " .. localPlayer.Name
             .. "\n● Chat hook: aktif ✓"
             .. "\n● MIN_TIER: " .. tostring(ctx.MIN_TIER)
-            .. "\n● Server: " .. plrCount .. " player"
+            .. "\n● Server: " .. #Players:GetPlayers() .. " player"
             .. "\n" .. boostLine
     end
 
-    -- ── Listen event LuckData dari ReplicatedStorage ─────────
+    -- Listen event LuckData
     task.spawn(function()
-        local ok2, Event = pcall(function()
-            -- path sesuai cobalt dump
-            return game:GetService("ReplicatedStorage")
+        local Event
+        pcall(function()
+            Event = game:GetService("ReplicatedStorage")
                 .Packages._Index["ytrev_replion@2.0.0-rc.3"]
                 .replion.Remotes.Update
         end)
-        if not ok2 or not Event then
-            warn("[FishIt] LuckData event tidak ditemukan, coba scan manual...")
-            -- Fallback: cari RemoteEvent bernama "Update" di dalam Replion
+        -- Fallback scan kalau path berubah
+        if not Event then
             pcall(function()
-                local rs = game:GetService("ReplicatedStorage")
-                for _, pkg in ipairs(rs.Packages._Index:GetChildren()) do
+                local idx = game:GetService("ReplicatedStorage").Packages._Index
+                for _, pkg in ipairs(idx:GetChildren()) do
                     if pkg.Name:find("replion") then
                         local rem = pkg:FindFirstChild("Remotes", true)
                         if rem then
                             local upd = rem:FindFirstChild("Update")
-                            if upd then Event = upd end
+                            if upd then Event = upd; break end
                         end
                     end
                 end
             end)
         end
-
         if not Event then
-            warn("[FishIt] LuckData event tidak bisa ditemukan.")
+            warn("[FishIt] LuckData event tidak ditemukan.")
             return
         end
-
-        Event.OnClientEvent:Connect(function(key, dataKey, data)
-            -- key="\x11", dataKey="LuckData", data={Remaining,Started,Amount}
+        Event.OnClientEvent:Connect(function(_, dataKey, data)
             if dataKey == "LuckData" and type(data) == "table" then
-                luckBoostAmount   = data.Amount   or 0
-                -- Remaining = total durasi dalam detik dari waktu Started
-                local started     = data.Started  or 0
-                local remaining   = data.Remaining or 0
-                luckBoostExpireAt = started + remaining
+                luckBoostAmount   = data.Amount or 0
+                luckBoostExpireAt = (data.Started or 0) + (data.Remaining or 0)
                 local sisa = math.max(0, luckBoostExpireAt - os.time())
                 print(string.format("[FishIt] LuckBoost x%d | Sisa: %s", luckBoostAmount, formatDuration(sisa)))
-
-                -- Update paragraph kalau sudah dibuat
                 if statusParagraph and statusParagraph.SetDesc then
-                    statusParagraph:SetDesc(buildStatusDesc())
+                    pcall(function() statusParagraph:SetDesc(buildStatusDesc()) end)
                 end
             end
         end)
-
         print("[FishIt] LuckData event terhubung ✓")
     end)
 
@@ -132,12 +122,12 @@ local function buildUI(ctx)
     -- ============================================================
     local TabSettings = Window:Tab({ Title = "Settings", Icon = "settings" })
 
-    -- ── Toggles ──────────────────────────────────
+    -- Anti-AFK → Value pakai ctx.ANTI_AFK_ENABLED (false di main)
     TabSettings:Toggle({
         Title    = "Anti-AFK",
         Desc     = "Cegah kick AFK otomatis",
         Icon     = "shield-check",
-        Value    = ctx.ANTI_AFK_ENABLED,
+        Value    = ctx.ANTI_AFK_ENABLED,   -- false by default dari main
         Callback = function(state) ctx.setAntiAfk(state) end,
     })
 
@@ -165,27 +155,24 @@ local function buildUI(ctx)
         Callback = function(state) ctx.setAutoSell(state) end,
     })
 
-    -- ── Status Server (dengan Luck Boost) ────────
-    -- Simpan referensi agar bisa di-update realtime
+    -- Status Server (dengan Luck Boost realtime)
     statusParagraph = TabSettings:Paragraph({
         Title = "Status Server",
         Desc  = buildStatusDesc(),
         Icon  = "activity",
     })
 
-    -- ── Loop update status setiap 30 detik ───────
+    -- Update setiap 30 detik
     task.spawn(function()
         while true do
             task.wait(30)
             if statusParagraph and statusParagraph.SetDesc then
-                pcall(function()
-                    statusParagraph:SetDesc(buildStatusDesc())
-                end)
+                pcall(function() statusParagraph:SetDesc(buildStatusDesc()) end)
             end
         end
     end)
 
-    -- ── Player List ──────────────────────────────
+    -- Player List
     local plrList = {}
     for _, p in ipairs(Players:GetPlayers()) do
         table.insert(plrList, p.Name)
@@ -201,7 +188,6 @@ local function buildUI(ctx)
     -- ============================================================
     local TabFocus = Window:Tab({ Title = "Focus", Icon = "target" })
 
-    -- Input tambah ikan
     TabFocus:Input({
         Title       = "Tambah Focus Fish",
         Desc        = "Ikan ini selalu trigger notif tanpa peduli tier",
@@ -213,19 +199,18 @@ local function buildUI(ctx)
                 FOCUS_FISH[name] = true
                 print("[FishIt] FOCUS_FISH tambah: " .. name)
                 WindUI:Notify({
-                    Title   = "Focus Fish Ditambah",
-                    Content = name .. " ditambahkan ke daftar Focus",
+                    Title    = "Focus Fish Ditambah",
+                    Content  = name .. " ditambahkan ke daftar Focus",
                     Duration = 3,
-                    Icon    = "fish",
+                    Icon     = "fish",
                 })
             end
         end,
     })
 
-    -- Tombol lihat daftar
     TabFocus:Button({
         Title    = "Lihat Daftar Focus Fish",
-        Desc     = "Tampilkan semua ikan yang di-focus",
+        Desc     = "Tampilkan semua ikan dalam notifikasi",
         Icon     = "list",
         Callback = function()
             local names = {}
@@ -242,7 +227,6 @@ local function buildUI(ctx)
         end,
     })
 
-    -- Daftar focus fish (statis saat build)
     do
         local names = {}
         for fishName in pairs(FOCUS_FISH) do
@@ -256,7 +240,6 @@ local function buildUI(ctx)
         })
     end
 
-    -- Hapus semua
     TabFocus:Button({
         Title    = "Hapus Semua Focus Fish",
         Desc     = "Kosongkan seluruh daftar focus fish",
@@ -273,7 +256,6 @@ local function buildUI(ctx)
         end,
     })
 
-    -- Crystalized Fish info
     TabFocus:Paragraph({
         Title = "Crystalized Fish (" .. #CRYSTALIZED_FISH .. ")",
         Desc  = #CRYSTALIZED_FISH > 0
@@ -293,34 +275,57 @@ local function buildUI(ctx)
     for _, w in ipairs(WEATHER_LIST) do
         local wName  = w.Name or w
         local wPrice = w.Price or 0
-        -- Format harga pakai titik sebagai pemisah ribuan
+        -- Format harga: 20000 → 20.000
         local priceStr = tostring(wPrice):reverse():gsub("(%d%d%d)", "%1."):reverse():gsub("^%.", "")
         local label = wName .. " ($" .. priceStr .. ")"
         table.insert(weatherValues, label)
         weatherMap[label] = w
     end
 
-    local selectedWeatherLabel = nil
+    -- Multi-select dropdown, maksimum 3 cuaca
+    local selectedWeathers = {}  -- { label1, label2, ... }
 
     local weatherDropdown = TabWeather:Dropdown({
         Title     = "Select Weather",
-        Desc      = "Pilih cuaca untuk dibeli atau di-auto",
+        Desc      = "Pilih cuaca (maks. 3) untuk dibeli atau di-auto",
         Icon      = "cloud-sun",
         Values    = weatherValues,
+        Multi     = true,
         AllowNone = true,
         Callback  = function(selected)
-            selectedWeatherLabel = selected
+            -- selected adalah table list dari pilihan aktif
+            if type(selected) == "table" then
+                -- Batasi maks 3
+                if #selected > 3 then
+                    WindUI:Notify({
+                        Title    = "Maksimal 3 Cuaca!",
+                        Content  = "Kamu hanya bisa memilih maksimal 3 cuaca sekaligus",
+                        Duration = 3,
+                        Icon     = "alert-triangle",
+                    })
+                    -- Potong ke 3 pertama
+                    local trimmed = {}
+                    for i = 1, 3 do trimmed[i] = selected[i] end
+                    selected = trimmed
+                end
+                selectedWeathers = selected
+                print("[FishIt] Weather dipilih: " .. table.concat(selectedWeathers, ", "))
+            elseif type(selected) == "string" and selected ~= "" then
+                selectedWeathers = { selected }
+            else
+                selectedWeathers = {}
+            end
         end,
     })
 
-    -- Single toggle: Auto Buy Weather Events
+    -- Toggle: Auto Buy Weather Events (untuk semua cuaca yang dipilih)
     TabWeather:Toggle({
         Title    = "Auto Buy Weather Events",
         Desc     = "Beli otomatis cuaca yang dipilih saat durasi habis",
         Icon     = "repeat",
         Value    = false,
         Callback = function(state)
-            if not selectedWeatherLabel or selectedWeatherLabel == "" then
+            if #selectedWeathers == 0 then
                 WindUI:Notify({
                     Title    = "Pilih Cuaca Dulu!",
                     Content  = "Silakan pilih cuaca dari dropdown sebelum mengaktifkan auto buy",
@@ -329,29 +334,35 @@ local function buildUI(ctx)
                 })
                 return
             end
-            local info = weatherMap[selectedWeatherLabel]
-            if info and ctx.setAutoWeather then
-                local wName = info.Name or info
-                ctx.setAutoWeather(wName, state)
-                WindUI:Notify({
-                    Title    = state and ("Auto Buy ON: " .. wName) or ("Auto Buy OFF: " .. wName),
-                    Content  = state
-                        and (wName .. " akan dibeli otomatis saat habis")
-                        or  (wName .. " auto buy dihentikan"),
-                    Duration = 3,
-                    Icon     = state and "check-circle" or "x-circle",
-                })
+            for _, label in ipairs(selectedWeathers) do
+                local info = weatherMap[label]
+                if info and ctx.setAutoWeather then
+                    local wName = info.Name or info
+                    ctx.setAutoWeather(wName, state)
+                end
             end
+            local names = {}
+            for _, label in ipairs(selectedWeathers) do
+                local info = weatherMap[label]
+                if info then table.insert(names, info.Name or info) end
+            end
+            WindUI:Notify({
+                Title    = state and "Auto Buy ON" or "Auto Buy OFF",
+                Content  = (state and "Auto buy aktif: " or "Auto buy berhenti: ")
+                        .. table.concat(names, ", "),
+                Duration = 4,
+                Icon     = state and "check-circle" or "x-circle",
+            })
         end,
     })
 
-    -- Tombol Buy Now (beli cuaca yang dipilih di dropdown)
+    -- Tombol Buy Now (beli semua yang dipilih sekarang)
     TabWeather:Button({
         Title    = "Buy Now",
-        Desc     = "Beli cuaca yang dipilih di dropdown sekali langsung",
+        Desc     = "Beli semua cuaca yang dipilih di dropdown sekarang",
         Icon     = "shopping-bag",
         Callback = function()
-            if not selectedWeatherLabel or selectedWeatherLabel == "" then
+            if #selectedWeathers == 0 then
                 WindUI:Notify({
                     Title    = "Pilih Cuaca Dulu!",
                     Content  = "Pilih cuaca dari dropdown terlebih dahulu",
@@ -360,28 +371,29 @@ local function buildUI(ctx)
                 })
                 return
             end
-            local info = weatherMap[selectedWeatherLabel]
-            if info and ctx.buyWeatherOnce then
-                local wName = info.Name or info
-                local result = ctx.buyWeatherOnce(wName)
-                WindUI:Notify({
-                    Title    = result and "Berhasil Beli!" or "Gagal Beli",
-                    Content  = result
-                        and (wName .. " berhasil dibeli!")
-                        or  (wName .. " gagal / masih aktif"),
-                    Duration = 3,
-                    Icon     = result and "check-circle" or "x-circle",
-                })
+            local results = {}
+            for _, label in ipairs(selectedWeathers) do
+                local info = weatherMap[label]
+                if info and ctx.buyWeatherOnce then
+                    local wName = info.Name or info
+                    local ok2 = ctx.buyWeatherOnce(wName)
+                    table.insert(results, wName .. (ok2 and " ✓" or " ✗"))
+                end
             end
+            WindUI:Notify({
+                Title    = "Hasil Buy Cuaca",
+                Content  = table.concat(results, "\n"),
+                Duration = 5,
+                Icon     = "cloud-lightning",
+            })
         end,
     })
 
-    -- Info cuaca aktif (yang auto-nya ON)
     TabWeather:Paragraph({
         Title = "Info",
-        Desc  = "Pilih cuaca dari dropdown, lalu toggle Auto Buy\n"
-             .. "atau klik Buy Now untuk beli langsung.\n"
-             .. "Auto Buy akan beli ulang saat durasi habis.",
+        Desc  = "● Pilih 1–3 cuaca dari dropdown\n"
+             .. "● Toggle Auto Buy → beli ulang otomatis saat habis\n"
+             .. "● Buy Now → beli semua pilihan sekarang",
         Icon  = "info",
     })
 
@@ -450,7 +462,6 @@ local function buildUI(ctx)
         Callback = function(v) ctx.setSellInterval(v) end,
     })
 
-    -- ── Statistik ────────────────────────────────
     local focusCount = 0
     for _ in pairs(FOCUS_FISH) do focusCount = focusCount + 1 end
 
@@ -478,7 +489,6 @@ local function buildUI(ctx)
         end,
     })
 
-    -- ── Aktifkan tab Settings duluan ─────────────
     TabSettings:Select()
 
     print("[FishIt] WindUI (THREEFASTER NOTIF X8) berhasil dibangun")
