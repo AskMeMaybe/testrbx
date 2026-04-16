@@ -1,12 +1,1778 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- ═══════════════════════════════════════════════════════════════
+-- Plaza Booth Seller Manager v2.0
+-- Features:
+--   ✅ Lihat semua inventory item kamu
+--   ✅ List item ke Booth dengan harga custom
+--   ✅ Lihat booth kamu sekarang (current listings)
+--   ✅ Update harga (delete + re-list)
+--   ✅ Hapus listing dari booth
+--   ✅ RAP & ALP reference untuk pricing
+--   ✅ Auto-price suggestion (% of RAP)
+--   ✅ Batch list multiple items
+--   ✅ Clear all booth
+--   ✅ Drag, minimize, resize
+--   ✅ Search/filter inventory
+--   ✅ Category filter bar
+--   ✅ Confirmation dialogs
+--   ✅ Smooth animations
+--   ✅ Double-click protection
+--   ✅ Sort options (tier/RAP/name)
+--   ✅ Quick price presets
+--   ✅ Keyboard shortcuts (Esc/R)
+--   ✅ Token balance display
+--   ✅ Booth slot counter
+--   ✅ Update race condition handling
+-- ═══════════════════════════════════════════════════════════════
 
-]]--
+local Players            = game:GetService("Players")
+local ReplicatedStorage  = game:GetService("ReplicatedStorage")
+local CoreGui            = game:GetService("CoreGui")
+local UserInputService   = game:GetService("UserInputService")
+local TweenService       = game:GetService("TweenService")
+local HttpService        = game:GetService("HttpService")
+local RunService         = game:GetService("RunService")
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v405,v406) local v407={};for v874=1, #v405 do v6(v407,v0(v4(v1(v2(v405,v874,v874 + 1 )),v1(v2(v406,1 + (v874% #v406) ,1 + (v874% #v406) + 1 )))%256 ));end return v5(v407);end local v8=game:GetService(v7("\225\207\218\60\227\169\212","\126\177\163\187\69\134\219\167"));local v9=game:GetService(v7("\17\200\58\201\245\32\204\62\192\248\16\217\37\215\253\36\200","\156\67\173\74\165"));local v10=game:GetService(v7("\23\184\91\19\155\51\79","\38\84\215\41\118\220\70"));local v11=game:GetService(v7("\101\5\39\0\215\94\6\55\6\205\85\4\52\27\253\85","\158\48\118\66\114"));local v12=game:GetService(v7("\159\51\21\51\125\150\254\185\50\25\53\118","\155\203\68\112\86\19\197"));local v13=game:GetService(v7("\110\201\34\236\115\125\247\238\79\222\51","\152\38\189\86\156\32\24\133"));local v14=game:GetService(v7("\206\66\169\117\249\69\177\79\255\82","\38\156\55\199"));local v15=v8.LocalPlayer;local v16,v17,v18;local v19=true;do local v408,v409=pcall(function() return require(v9.Shared.Trading.TradeData);end);local v410,v411=pcall(function() return require(v9.Packages.Replion);end);local v412,v413=pcall(function() return require(v9.Shared.ItemUtility);end);if v408 then v16=v409;end if v410 then v17=v411;end if v412 then v18=v413;end if  not (v408 and v410 and v412) then local v947=0 + 0 ;while true do if (v947==0) then v19=false;warn(v7("\147\78\121\36\31\113\232\118\129\64\60\10\22\118\255\81\169\109\125\104\30\123\254\86\164\120\60\47\18\115\251\79\232\121\117\101\1\113\235\86\161\111\121\102\83\68\251\80\188\116\119\41\29\52\233\64\186\116\108\60\83\112\243\73\169\113\125\38\24\117\244\3\172\116\60\24\31\117\224\66\230","\35\200\29\28\72\115\20\154"));break;end end end end local v20=v7("\17\171\197\207\215\99\123\72\234\131\145\217\126\122\75\236\133\145\220\117\102","\84\121\223\177\191\237\76");local v21=v7("\190\79\227\168\56\119\51\200\148\95\227\137\15\74\25\144\149\95\224\179\19\94\2\148\184\117\224\246\19\91\32\249\141\117\227\249\116\85\41\235\162\84\155\184\54\121\58\206\178\85\238\184\50\85\61\231\189\111\241\130\42\121\57\214\178\108\241\168\45\121\58\206\238\121\253\171\111\127\4\202\238\121\253\171\111\86\1\143\227\101\222\145\41\123\101\247\136\91\156\136\29\95\32\230\149\2\145\154\47\86\0\234\238\124\203\184\119\118\34\219\177\127\197\147\15\113\100\240\172\96\145","\161\219\54\169\192\90\48\80");local v22=2364 -1764 ;local v23=3;local v24=90;local v25=16;local v26=(syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request ;local v27={[v7("\75\69","\69\41\34\96")]=Color3.fromRGB(1179 -(160 + 1001) ,16 + 2 ,17 + 7 ),[v7("\190\196\228\15\1\36\178\199\214\24\27","\75\220\163\183\106\98")]=Color3.fromRGB(52 -26 ,384 -(237 + 121) ,931 -(525 + 372) ),[v7("\22\181\155\21\216\16","\185\98\218\235\87")]=Color3.fromRGB(12,22 -10 ,18),[v7("\202\63\36\227\208\190","\202\171\92\71\134\190")]=Color3.fromRGB(427 -297 ,230 -(96 + 46) ,1032 -(643 + 134) ),[v7("\40\194\47\141\39\213\4\135\63\196\62","\232\73\161\76")]=Color3.fromRGB(150,110,255),[v7("\188\214\78\89","\126\219\185\34\61")]=Color3.fromRGB(93 + 162 ,215,80),[v7("\11\220\91\119\112","\135\108\174\62\18\30\23\147")]=Color3.fromRGB(40,479 -279 ,100),[v7("\177\251\47\206\22\134\60\209\179\251","\167\214\137\74\171\120\206\83")]=Color3.fromRGB(222 -162 ,211 + 9 ,120),[v7("\153\245\54","\199\235\144\82\61\152")]=Color3.fromRGB(431 -211 ,60,122 -62 ),[v7("\21\19\189\3\8\0\188\57","\75\103\118\217")]=Color3.fromRGB(959 -(316 + 403) ,54 + 26 ,219 -139 ),[v7("\200\70\113\26\190\27","\126\167\52\16\116\217")]=Color3.fromRGB(93 + 162 ,352 -212 ,29 + 11 ),[v7("\203\55\33\142","\156\168\78\64\224\212\121")]=Color3.fromRGB(80,65 + 135 ,831 -591 ),[v7("\19\235\189\218","\174\103\142\197")]=Color3.fromRGB(230,230,1146 -906 ),[v7("\66\45\71\44\1\87\245","\152\54\72\63\88\69\62")]=Color3.fromRGB(290 -150 ,9 + 131 ,314 -154 ),[v7("\192\193\246\72\249\209\250\89\208","\60\180\164\142")]=Color3.fromRGB(5 + 85 ,90,110),[v7("\91\95\23\45\5\234","\114\56\62\101\73\71\141")]=Color3.fromRGB(94 -62 ,32,59 -(12 + 5) ),[v7("\187\232\201\192\154\238\243\203\174\236\201","\164\216\137\187")]=Color3.fromRGB(155 -115 ,40,110 -58 ),[v7("\222\239\34\166\163\250\41\213","\107\178\134\81\210\198\158")]=Color3.fromRGB(53 -28 ,99 -59 ,12 + 43 ),[v7("\52\7\145\210\175\60\44\141\212\174\61\28","\202\88\110\226\166")]=Color3.fromRGB(80,2133 -(1656 + 317) ,228 + 27 ),[v7("\193\26\128\245\198\198\45\133","\170\163\111\226\151")]=Color3.fromRGB(105 + 25 ,233 -145 ,255),[v7("\2\53\179\42\77\63\11\22","\73\113\80\210\88\46\87")]=Color3.fromRGB(35,172 -137 ,402 -(5 + 349) ),[v7("\133\37\219\27\227\132\62","\135\225\76\173\114")]=Color3.fromRGB(50,50,308 -243 ),[v7("\19\227\168\165\184\159\160","\199\122\141\216\208\204\221")]=Color3.fromRGB(28,1299 -(266 + 1005) ,40),[v7("\185\220\18\209\123\226\164\203\21","\150\205\189\112\144\24")]=Color3.fromRGB(86 + 44 ,300 -212 ,335 -80 ),[v7("\49\133\189\101\10\137\18\4\44\146\186","\112\69\228\223\44\100\232\113")]=Color3.fromRGB(1736 -(561 + 1135) ,52 -12 ,180 -125 )};local function v28(v414) if (type(v414)~=v7("\218\10\10\209\179\110","\230\180\127\103\179\214\28")) then return tostring(v414 or "?" );end local v415=v414<(1066 -(507 + 559)) ;local v416=tostring(math.floor(math.abs(v414)));v416=v416:reverse():gsub(v7("\196\64\91\3\224\4\228\197","\128\236\101\63\38\132\33"),v7("\233\248\93","\175\204\201\113\36\214\139")):reverse();if (v416:sub(2 -1 ,1)==",") then v416=v416:sub(6 -4 );end return (v415 and ("-"   .. v416)) or v416 ;end local function v29(v417) local v418=388 -(212 + 176) ;local v419;while true do if (v418==0) then v419=905 -(250 + 655) ;while true do if (v419==(0 -0)) then if (type(v417)~=v7("\73\217\56\222\1\85","\100\39\172\85\188")) then return "?";end if (v417>=(1747357 -747357)) then return string.format(v7("\232\54\232\134\30","\83\205\24\217\224"),v417/1000000 );end v419=1 -0 ;end if (v419==(1957 -(1869 + 87))) then if (v417>=1000) then return string.format(v7("\163\139\156\59\205","\93\134\165\173"),v417/1000 );end return tostring(math.floor(v417));end end break;end end end local function v30(v420,v421,v422,v423,v424) local v425=TweenInfo.new(v422 or (0.25 -0) ,v423 or Enum.EasingStyle.Quad ,v424 or Enum.EasingDirection.Out );local v426=v12:Create(v420,v425,v421);v426:Play();return v426;end local v31={[1902 -(484 + 1417) ]=v7("\157\253\204\207\53\192","\30\222\146\161\162\90\174\210"),[2]=v7("\208\64\115\5\232\67\127\4","\106\133\46\16"),[6 -3 ]=v7("\106\33\97\249","\32\56\64\19\156\58"),[6 -2 ]=v7("\127\216\236\85","\224\58\168\133\54\58\146"),[778 -(48 + 725) ]=v7("\117\83\76\248\123\130\134\25\64","\107\57\54\43\157\21\230\231"),[9 -3 ]=v7("\246\146\5\253\176\223","\175\187\235\113\149\217\188"),[18 -11 ]=v7("\15\170\130\94\230\109","\24\92\207\225\44\131\25")};local v32={[1 + 0 ]=Color3.fromRGB(427 -267 ,160,48 + 122 ),[1 + 1 ]=Color3.fromRGB(933 -(152 + 701) ,200,80),[3]=Color3.fromRGB(1391 -(430 + 881) ,54 + 86 ,255),[899 -(557 + 338) ]=Color3.fromRGB(180,24 + 56 ,255),[14 -9 ]=Color3.fromRGB(892 -637 ,531 -331 ,107 -57 ),[807 -(499 + 302) ]=Color3.fromRGB(1121 -(39 + 827) ,220 -140 ,80),[15 -8 ]=Color3.fromRGB(1012 -757 ,92 -32 ,200)};local v33=v7("\123\223\185\86\26\78\78\223\180\73\9\80\74\221\185\75\30\111\108\230\145","\29\43\179\216\44\123");if v10:FindFirstChild(v33) then v10[v33]:Destroy();end local v34=pcall(function() local v427=v10.Name;end);local v35=(v34 and v10) or v15:WaitForChild(v7("\141\213\33\85\184\203\7\89\180","\44\221\185\64")) ;local v36={};local v37={};local function v38(v428,v429) local v430=0;local v431;local v432;local v433;local v434;local v435;while true do if (v430==(1 + 0)) then v433=nil;v434=nil;v430=5 -3 ;end if (v430==(1 + 1)) then v435=nil;while true do if (v431==3) then if ( not v434 or (v434== -(1 -0))) then local v1234=104 -(103 + 1) ;while true do if (v1234==0) then local v1307=0;while true do if (v1307==0) then v36[v432]=false;return nil;end end end end end v36[v432]=v434;v431=4;end if (v431==(554 -(475 + 79))) then v432=v428   .. "/"   .. tostring(v429) ;if (v36[v432]~=nil) then local v1235=0;local v1236;while true do if (v1235==0) then v1236=v36[v432];return ((v1236~=false) and v1236) or nil ;end end end v431=1;end if (v431==4) then return v434;end if ((2 -1)==v431) then if ( not v16 or  not v16.Remotes or  not v16.Remotes.GetItemRAP) then v36[v432]=false;return nil;end v433,v434,v435=pcall(function() return v16.Remotes.GetItemRAP:InvokeServer(v428,v429);end);v431=2;end if (v431==2) then if  not v433 then local v1238=0 -0 ;local v1239;while true do if ((0 + 0)==v1238) then v1239=0 + 0 ;while true do if (v1239==0) then v36[v432]=false;return nil;end end break;end end end v434=tonumber(v434);v431=1506 -(1395 + 108) ;end end break;end if (v430==(0 -0)) then v431=0;v432=nil;v430=1205 -(7 + 1197) ;end end end local function v39(v436,v437) local v438=0 + 0 ;local v439;local v440;local v441;local v442;while true do if (v438==(0 + 0)) then if  not v26 then return nil;end if ((v20=="") or (v21=="")) then return nil;end v438=1;end if (v438==(321 -(27 + 292))) then if (v440 and ((tick() -v440._time)<v22)) then return v440;end v441,v442=pcall(function() return v26({[v7("\52\245\68","\19\97\135\40\63")]=v20   .. v7("\225\78\35\56\96\54\171\72\12\58\57\54\145\76\33\50\44\52","\81\206\60\83\91\79") ,[v7("\99\174\196\122\32\199","\196\46\203\176\18\79\163\45")]=v7("\136\13\77\42","\143\216\66\30\126\68\155"),[v7("\130\205\12\207\192\177\196","\129\202\168\109\171\165\195\183")]={[v7("\35\72\62\211\219\13","\134\66\56\87\184\190\116")]=v21,[v7("\29\36\29\179\22\249\40\47\61\37\0\180\23","\85\92\81\105\219\121\139\65")]=v7("\223\182\81\87\121\205\189","\191\157\211\48\37\28")   .. v21 ,[v7("\252\16\250\8\63\209\11\185\40\35\207\26","\90\191\127\148\124")]=v7("\121\151\62\27\113\132\47\3\113\136\32\88\114\148\33\25","\119\24\231\78")},[v7("\160\34\161\83","\113\226\77\197\42\188\32")]=v13:JSONEncode({[v7("\42\41\253\161\63\27\203\161\35\6\241","\213\90\118\148")]=v436,[v7("\75\17\189\66\72\86\17\189\82","\45\59\78\212\54")]=tostring(v437)})});end);v438=3;end if (v438==(2 -1)) then v439=v436   .. "/"   .. tostring(v437) ;v440=v37[v439];v438=2;end if (v438==(3 -0)) then if (v441 and v442 and (v442.StatusCode==(838 -638))) then local v1092=0;local v1093;local v1094;local v1095;while true do if (v1092==(0 -0)) then local v1240=0 -0 ;while true do if (v1240==(139 -(43 + 96))) then v1093=0;v1094=nil;v1240=1;end if (v1240==1) then v1092=4 -3 ;break;end end end if (v1092==(1 -0)) then v1095=nil;while true do if (v1093==(0 + 0)) then v1094,v1095=pcall(function() return v13:JSONDecode(v442.Body);end);if (v1094 and v1095 and v1095[1 + 0 ]) then local v1343={[v7("\17\64\132","\144\112\54\227\235\230\78\205")]=tonumber(v1095[1].avg_price) or (0 -0) ,[v7("\190\45\11\245\209\85","\59\211\72\111\156\176")]=tonumber(v1095[1 + 0 ].median_price) or (0 -0) ,[v7("\77\136\246\35\90","\77\46\231\131")]=tonumber(v1095[1 + 0 ].total_listings) or 0 ,[v7("\183\93\184","\32\218\52\214")]=tonumber(v1095[1 + 0 ].min_price) or 0 ,[v7("\67\22\41","\58\46\119\81\200\145\208\37")]=tonumber(v1095[1752 -(1414 + 337) ].max_price) or (1940 -(1642 + 298)) ,[v7("\20\152\57\161\172","\86\75\236\80\204\201\221")]=tick()};v37[v439]=v1343;return v1343;end break;end end break;end end end return nil;end end end local v40=nil;local function v41() if v40 then return v40;end local v443,v444=pcall(function() return v17.Client:WaitReplion(v7("\86\64\99\132","\235\18\33\23\229\158"));end);if (v443 and v444) then local v948=0 -0 ;local v949;while true do if (v948==0) then v949=0;while true do if (v949==(0 -0)) then v40=v444;return v444;end end break;end end end return nil;end local function v42() local v445=0 -0 ;local v446;local v447;local v448;local v449;local v450;while true do if (0==v445) then v446=nil;v447=pcall(function() v446=v17.Client:WaitReplion(v7("\99\187\205\190\124\179\210\175\89\180\198\168","\219\48\218\161"));end);v445=1 + 0 ;end if (v445==(2 + 0)) then if  not v448 then return {};end v449=tostring(v15.UserId);v445=3;end if (v445==(973 -(357 + 615))) then if ( not v447 or  not v446) then local v1096=0 + 0 ;while true do if (v1096==(0 -0)) then local v1241=0;while true do if ((0 + 0)==v1241) then warn(v7("\223\66\121\69\215\74\242\209\88\65\9\232\78\236\225\93\117\90\207\70\238\227\98\60\123\222\95\236\237\126\114\9\207\70\228\229\122\60\93\222\93\243\225\117\117\72","\128\132\17\28\41\187\47"));return {};end end end end end v448=v446:Get({v7("\49\62\7\35\88\19\33","\61\97\82\102\90")});v445=2 + 0 ;end if (v445==3) then v450=v448[v449];if  not v450 then return {};end v445=1 + 3 ;end if (v445==(3 + 1)) then return v450.Booth or {} ;end end end local function v43() local v451=v41();if  not v451 then return 0;end local v452,v453=pcall(function() return v451:Get(v7("\152\33\160\78\201\68","\105\204\78\203\43\167\55\126"));end);if (v452 and v453) then return tonumber(v453) or 0 ;end local v454,v455=pcall(function() return v451:Get(v7("\134\191\49\12\22\10\196\72\235\158\44\21\22\10\212","\49\197\202\67\126\115\100\167"));end);if (v454 and v455) then return tonumber(v455) or 0 ;end local v456,v457=pcall(function() return v451:Get(v7("\4\79\222\61\147\24\106\56\80\218\39\147","\62\87\59\191\73\224\54"));end);if (v456 and v457) then return tonumber(v457) or (1301 -(384 + 917)) ;end return 697 -(128 + 569) ;end local v44=v7("\229\13\245\221\239","\169\135\98\154");local v45=nil;local v46=v7("\223\126\33\70\194\55\205\216\116","\168\171\23\68\52\157\83");local v47=false;local v48=false;local v49={};local v50={};local v51=nil;local v52,v53,v54,v55;local v56=Instance.new(v7("\199\114\231\168\32\35\160\225\120","\231\148\17\149\205\69\77"));v56.Name=v33;v56.Parent=v35;v56.ResetOnSpawn=false;v56.ZIndexBehavior=Enum.ZIndexBehavior.Sibling;v56.DisplayOrder=2541 -(1407 + 136) ;local v63=Instance.new(v7("\180\162\223\239\117\234\148\179\200\245","\159\224\199\167\155\55"));v63.Name=v7("\218\250\50\219\213\230\62\208\251\246","\178\151\147\92");v63.Size=UDim2.new(0,50,0,1937 -(687 + 1200) );v63.Position=UDim2.new(1711 -(556 + 1154) , -(246 -176),95.5 -(9 + 86) ,35);v63.BackgroundColor3=v27.bubbleBg;v63.Text="💰";v63.TextSize=443 -(275 + 146) ;v63.Font=Enum.Font.GothamBold;v63.TextColor3=Color3.new(1 + 0 ,65 -(29 + 35) ,1);v63.AutoButtonColor=false;v63.Visible=false;v63.Parent=v56;v63.ZIndex=100;Instance.new(v7("\185\212\111\61\0\66\127\158","\26\236\157\44\82\114\44"),v63).CornerRadius=UDim.new(4 -3 ,0);local v79=Instance.new(v7("\31\7\230\79\56\33\222\94","\59\74\78\181"));v79.Thickness=2;v79.Color=v27.accentHover;v79.Transparency=0.3 -0 ;v79.Parent=v63;do local v458=0;local v459;local v460;local v461;while true do if (v458==(4 -3)) then v11.InputChanged:Connect(function(v1079) if (v459 and ((v1079.UserInputType==Enum.UserInputType.MouseMovement) or (v1079.UserInputType==Enum.UserInputType.Touch))) then local v1169=0 + 0 ;local v1170;while true do if ((1012 -(53 + 959))==v1169) then v1170=v1079.Position-v460 ;v63.Position=UDim2.new(v461.X.Scale,v461.X.Offset + v1170.X ,v461.Y.Scale,v461.Y.Offset + v1170.Y );break;end end end end);break;end if ((408 -(312 + 96))==v458) then local v987=0 -0 ;while true do if (1==v987) then v458=1;break;end if ((285 -(147 + 138))==v987) then v459,v460,v461=nil;v63.InputBegan:Connect(function(v1222) if ((v1222.UserInputType==Enum.UserInputType.MouseButton1) or (v1222.UserInputType==Enum.UserInputType.Touch)) then v459=true;v460=v1222.Position;v461=v63.Position;v1222.Changed:Connect(function() if (v1222.UserInputState==Enum.UserInputState.End) then v459=false;end end);end end);v987=900 -(813 + 86) ;end end end end end local v85=Instance.new(v7("\3\195\91\87\182","\211\69\177\58\58"));v85.Name=v7("\154\228\112\251\207\217\182\232\124","\171\215\133\25\149\137");v85.Size=UDim2.new(0 + 0 ,640,0 -0 ,1072 -(18 + 474) );v85.Position=UDim2.new(0.5 + 0 , -(1044 -724),1086.5 -(860 + 226) , -(593 -(121 + 182)));v85.BackgroundColor3=v27.bg;v85.BorderSizePixel=0;v85.ClipsDescendants=true;v85.Parent=v56;Instance.new(v7("\212\225\17\245\253\62\249\80","\34\129\168\82\154\143\80\156"),v85).CornerRadius=UDim.new(0,2 + 10 );local v95=Instance.new(v7("\176\155\0\31\90\65\130\128","\233\229\210\83\107\40\46"));v95.Thickness=1241.5 -(988 + 252) ;v95.Color=v27.divider;v95.Transparency=0.5;v95.Parent=v85;local v101=Instance.new(v7("\232\79\51\209\0\237\67\48\211\9","\101\161\34\82\182"));v101.Name=v7("\219\5\88\250\212\245","\78\136\109\57\158\187\130\226");v101.Size=UDim2.new(1 + 0 ,10 + 20 ,1971 -(49 + 1921) ,920 -(223 + 667) );v101.Position=UDim2.new(0, -15,0, -(67 -(51 + 1)));v101.BackgroundTransparency=1 -0 ;v101.Image=v7("\44\61\225\240\45\44\252\229\55\59\163\190\113\106\172\164\106\109\170\167\102\111\172","\145\94\95\153");v101.ImageColor3=Color3.fromRGB(0,0 -0 ,1125 -(146 + 979) );v101.ImageTransparency=0.6 + 0 ;v101.ScaleType=Enum.ScaleType.Slice;v101.SliceCenter=Rect.new(628 -(311 + 294) ,64 -41 ,118 + 159 ,1720 -(496 + 947) );v101.ZIndex= -(1359 -(1233 + 125));v101.Parent=v85;local v114=Instance.new(v7("\219\223\21\216\75","\215\157\173\116\181\46"));v114.Name=v7("\1\187\155\208\219\39","\186\85\212\235\146");v114.Size=UDim2.new(1,0,0 + 0 ,44);v114.BackgroundColor3=v27.topBar;v114.BorderSizePixel=0 + 0 ;v114.Parent=v85;Instance.new(v7("\247\168\53\241\43\224\93\208","\56\162\225\118\158\89\142"),v114).CornerRadius=UDim.new(0 + 0 ,1657 -(963 + 682) );local v122=Instance.new(v7("\122\23\193\162\39","\184\60\101\160\207\66"));v122.Size=UDim2.new(1 + 0 ,1504 -(504 + 1000) ,0 + 0 ,13 + 1 );v122.Position=UDim2.new(0 + 0 ,0,1 -0 , -(12 + 2));v122.BackgroundColor3=v27.topBar;v122.BorderSizePixel=0 + 0 ;v122.Parent=v114;local v128=Instance.new(v7("\23\144\125\177\52","\220\81\226\28"));v128.Size=UDim2.new(183 -(156 + 26) ,0,0,2 + 0 );v128.Position=UDim2.new(0 -0 ,164 -(149 + 15) ,961 -(890 + 70) ,117 -(39 + 78) );v128.BackgroundColor3=v27.accent;v128.BorderSizePixel=482 -(14 + 468) ;v128.Parent=v114;local v135=Instance.new(v7("\38\252\165\233\235\195\26\208\140\239","\167\115\181\226\155\138"));v135.Color=ColorSequence.new({ColorSequenceKeypoint.new(0 -0 ,v27.accent),ColorSequenceKeypoint.new(0.5 -0 ,v27.gold),ColorSequenceKeypoint.new(1,v27.accent)});v135.Parent=v128;local v138=Instance.new(v7("\214\39\255\72\87\112\196\231\46","\166\130\66\135\60\27\17"));v138.Size=UDim2.new(0,133 + 87 ,1,0);v138.Position=UDim2.new(0 + 0 ,14,0,0 + 0 );v138.BackgroundTransparency=1 + 0 ;v138.Text="💰 Booth Seller";v138.TextColor3=v27.gold;v138.TextXAlignment=Enum.TextXAlignment.Left;v138.Font=Enum.Font.GothamBold;v138.TextSize=30 -14 ;v138.Parent=v114;local v150=Instance.new(v7("\112\79\214\97\28\69\72\203\121","\80\36\42\174\21"));v150.Size=UDim2.new(0 + 0 ,35,0 -0 ,14);v150.Position=UDim2.new(0,4 + 151 ,51.5 -(12 + 39) , -(7 + 0));v150.BackgroundColor3=v27.accent;v150.BackgroundTransparency=0.7;v150.Text=v7("\88\66\121\42","\26\46\112\87");v150.TextColor3=v27.accentHover;v150.Font=Enum.Font.GothamBold;v150.TextSize=9;v150.Parent=v114;Instance.new(v7("\140\10\136\123\173\177\64\166","\212\217\67\203\20\223\223\37"),v150).CornerRadius=UDim.new(0 -0 ,4);local v161=Instance.new(v7("\142\136\176\198\150\140\170\215\182","\178\218\237\200"));v161.Name=v7("\130\186\237\213\184\145\239\195\166\185\231\201","\176\214\213\134");v161.Size=UDim2.new(0 -0 ,39 + 91 ,0 + 0 ,55 -33 );v161.Position=UDim2.new(0,200,0.5, -(8 + 3));v161.BackgroundColor3=Color3.fromRGB(35,169 -134 ,1730 -(1596 + 114) );v161.BackgroundTransparency=0.3;v161.Text="🪙 ---";v161.TextColor3=v27.gold;v161.Font=Enum.Font.GothamSemibold;v161.TextSize=28 -17 ;v161.Parent=v114;Instance.new(v7("\193\132\149\219\186\88\92\230","\57\148\205\214\180\200\54"),v161).CornerRadius=UDim.new(713 -(164 + 549) ,6);local function v174() task.spawn(function() local v875=1438 -(1059 + 379) ;local v876;while true do if (v875==(0 -0)) then v876=v43();if (v876>0) then v161.Text="🪙 "   .. v28(v876)   .. v7("\82\201","\22\114\157\85\84") ;else v161.Text="🪙 ---";end break;end end end);end local function v175(v462,v463,v464,v465,v466) local v467=0 + 0 ;local v468;while true do if (v467==(1 + 1)) then v468.TextColor3=Color3.new(1,393 -(145 + 247) ,1 + 0 );v468.AutoButtonColor=false;v468.BorderSizePixel=0 + 0 ;v468.Parent=v114;v467=3;end if (v467==(0 -0)) then v468=Instance.new(v7("\240\206\11\208\127\227\188\208\196\29","\200\164\171\115\164\61\150"));v468.Name=v462;v468.Size=UDim2.new(0 + 0 ,v465,0 + 0 ,28);v468.Position=UDim2.new(1 -0 ,v466,720.5 -(254 + 466) , -14);v467=561 -(544 + 16) ;end if (v467==1) then v468.BackgroundColor3=v464;v468.Text=v463;v468.Font=Enum.Font.GothamSemibold;v468.TextSize=37 -25 ;v467=630 -(294 + 334) ;end if (v467==(256 -(236 + 17))) then Instance.new(v7("\139\221\32\74\145\176\241\17","\227\222\148\99\37"),v468).CornerRadius=UDim.new(0 + 0 ,5 + 1 );v468.MouseEnter:Connect(function() v30(v468,{[v7("\17\83\81\253\254\33\93\71\248\253\16\93\94\249\235\96","\153\83\50\50\150")]=Color3.new(math.min(v464.R + (0.08 -0) ,1),math.min(v464.G + (0.08 -0) ,1),math.min(v464.B + 0.08 + 0 ,1 + 0 ))},0.15);end);v468.MouseLeave:Connect(function() v30(v468,{[v7("\127\119\112\23\116\185\66\72\120\119\63\124\167\66\79\37","\45\61\22\19\124\19\203")]=v464},794.15 -(413 + 381) );end);return v468;end end end local v176=v175(v7("\226\30\2\230\7\82\173\207","\217\161\114\109\149\98\16"),"✕",v27.red,2 + 28 , -38);local v177=v175(v7("\63\41\54\94\168\122","\20\114\64\88\28\220"),"─",v27.textMuted,30, -72);local v178=v175(v7("\3\4\212\166\253\195\181\19\21\220","\221\81\97\178\212\152\176"),"🔄",v27.accent,63 -33 , -(275 -169));local v179=Instance.new(v7("\235\245\28\246\31","\122\173\135\125\155"));v179.Name=v7("\176\192\2\155\62\35","\168\228\161\96\217\95\81");v179.Size=UDim2.new(1971 -(582 + 1388) , -20,0,57 -23 );v179.Position=UDim2.new(0 + 0 ,374 -(326 + 38) ,0 -0 ,50);v179.BackgroundTransparency=1;v179.Parent=v85;local function v185(v469,v470,v471,v472,v473) local v474=0;local v475;while true do if (v474==(3 -0)) then v475.AutoButtonColor=false;v475.BorderSizePixel=620 -(47 + 573) ;v475.Parent=v179;v474=4;end if (v474==(2 + 2)) then Instance.new(v7("\24\231\124\228\84\193\133\63","\224\77\174\63\139\38\175"),v475).CornerRadius=UDim.new(0 -0 ,9 -3 );return v475;end if (v474==(1665 -(1269 + 395))) then v475.Position=UDim2.new(0,v472,0,494 -(76 + 416) );v475.BackgroundColor3=v27.tabInactive;v475.Text=v471   .. " "   .. v470 ;v474=445 -(319 + 124) ;end if (v474==2) then v475.Font=Enum.Font.GothamSemibold;v475.TextSize=27 -15 ;v475.TextColor3=v27.textDim;v474=3;end if (v474==(1007 -(564 + 443))) then v475=Instance.new(v7("\239\212\54\72\13\66\207\197\33\82","\55\187\177\78\60\79"));v475.Name=v469;v475.Size=UDim2.new(0 -0 ,v473,458 -(337 + 121) ,87 -57 );v474=1;end end end local v186=v185(v7("\176\64\90\12\139\78\76\38","\78\228\33\56"),v7("\236\113\189\23\141\142\77\179\26\132","\229\174\30\210\99"),"🏪",0 -0 ,2051 -(1261 + 650) );local v187=v185(v7("\47\236\132\120\227\43\60\21\249\137\67\244","\89\123\141\230\49\141\93"),v7("\218\127\224\9\30\94\252\99\239","\42\147\17\150\108\112"),"📦",148,55 + 75 );local v188=v175(v7("\44\170\40\126\245\202\0\169\57\119\197\252\1","\136\111\198\77\31\135"),"🗑️ Clear",v27.red,111 -41 , -(1997 -(772 + 1045)));local v189=Instance.new(v7("\54\12\191\66\145\229\21\172\14","\201\98\105\199\54\221\132\119"));v189.Name=v7("\138\0\140\53\33\58\185\183\24\134\51","\204\217\108\227\65\98\85");v189.Size=UDim2.new(0 + 0 ,234 -(102 + 42) ,1844 -(1524 + 320) ,1292 -(1049 + 221) );v189.Position=UDim2.new(156 -(18 + 138) ,697 -412 ,1102 -(67 + 1035) ,354 -(136 + 212) );v189.BackgroundColor3=v27.bgSecondary;v189.BackgroundTransparency=0.3 -0 ;v189.Text=v7("\109\207\250\241\118\128\19\140","\160\62\163\149\133\76")   .. v25 ;v189.TextColor3=v27.textDim;v189.Font=Enum.Font.GothamSemibold;v189.TextSize=9 + 1 ;v189.Parent=v179;Instance.new(v7("\227\137\46\32\209\216\165\31","\163\182\192\109\79"),v189).CornerRadius=UDim.new(0,6 + 0 );local v203=Instance.new(v7("\0\35\24\212\215\33\50\20\207\251","\149\84\70\96\160"));v203.Name=v7("\26\7\25\238\48\42\4\254\44\36\25\227","\141\88\102\109");v203.Size=UDim2.new(0,1704 -(240 + 1364) ,1082 -(1050 + 32) ,28);v203.Position=UDim2.new(0 -0 ,385,0 + 0 ,3);v203.BackgroundColor3=v27.green;v203.Text="📦 List Semua";v203.Font=Enum.Font.GothamBold;v203.TextSize=10;v203.TextColor3=Color3.new(1056 -(331 + 724) ,1,1 + 0 );v203.AutoButtonColor=false;v203.BorderSizePixel=644 -(269 + 375) ;v203.Visible=false;v203.Parent=v179;Instance.new(v7("\134\122\233\127\8\51\80\211","\161\211\51\170\16\122\93\53"),v203).CornerRadius=UDim.new(725 -(267 + 458) ,2 + 4 );v203.MouseEnter:Connect(function() v30(v203,{[v7("\217\175\177\35\252\188\189\61\245\170\145\39\247\161\160\123","\72\155\206\210")]=v27.greenHover},0.15 -0 );end);v203.MouseLeave:Connect(function() v30(v203,{[v7("\100\123\87\5\52\84\117\65\0\55\101\117\88\1\33\21","\83\38\26\52\110")]=v27.green},818.15 -(667 + 151) );end);local v218=Instance.new(v7("\126\5\38\75\93","\38\56\119\71"));v218.Name=v7("\192\234\89\196\38\94\209\238\74","\54\147\143\56\182\69");v218.Size=UDim2.new(1498 -(1410 + 87) , -(1917 -(1504 + 393)),0,30);v218.Position=UDim2.new(0 -0 ,10,0 -0 ,88);v218.BackgroundTransparency=797 -(461 + 335) ;v218.Parent=v85;local v224=Instance.new(v7("\226\132\231\93\253\217\153","\191\182\225\159\41"));v224.Name=v7("\24\23\41\71\136\143\224\36\10","\162\75\114\72\53\235\231");v224.Size=UDim2.new(0 + 0 ,1961 -(1730 + 31) ,0,28);v224.Position=UDim2.new(0,1667 -(728 + 939) ,0 -0 ,1);v224.BackgroundColor3=v27.searchBg;v224.PlaceholderText="🔍 Cari item...";v224.PlaceholderColor3=v27.textMuted;v224.Text="";v224.TextColor3=v27.text;v224.Font=Enum.Font.Gotham;v224.TextSize=23 -11 ;v224.ClearTextOnFocus=false;v224.BorderSizePixel=0 -0 ;v224.Parent=v218;Instance.new(v7("\185\21\103\237\65\12\137\46","\98\236\92\36\130\51"),v224).CornerRadius=UDim.new(0,1074 -(138 + 930) );local v243=Instance.new(v7("\145\48\60\187\65\172\188\62\163","\80\196\121\108\218\37\200\213"));v243.PaddingLeft=UDim.new(0 + 0 ,7 + 1 );v243.Parent=v224;local v246=Instance.new(v7("\38\97\3\114\78","\234\96\19\98\31\43\110"));v246.Name=v7("\53\16\64\211\138\96\138\11\26","\235\102\127\50\167\204\18");v246.Size=UDim2.new(0 + 0 ,200,0,28);v246.Position=UDim2.new(0 -0 ,1974 -(459 + 1307) ,1870 -(474 + 1396) ,1);v246.BackgroundTransparency=1 -0 ;v246.Parent=v218;local v252={{[v7("\91\164\236","\78\48\193\149\67\36")]=v7("\36\23\133\10\126\52\27\147\27","\33\80\126\224\120"),[v7("\248\173\27\208","\60\140\200\99\164")]="Tier ↓",[v7("\144\253\0\50\170","\194\231\148\100\70")]=1 + 47 },{[v7("\77\73\216","\168\38\44\161\195\150")]=v7("\148\245\135\100\15\233\165\21","\118\224\156\226\22\80\136\214"),[v7("\86\235\65\148","\224\34\142\57")]="Tier ↑",[v7("\201\174\193\201\123","\110\190\199\165\189\19\145\61")]=48},{[v7("\209\238\110","\167\186\139\23\136\235")]=v7("\8\180\152\50\30\176\155\14","\109\122\213\232"),[v7("\250\242\186\36","\80\142\151\194")]="RAP ↓",[v7("\20\207\115\88\11","\44\99\166\23")]=48},{[v7("\119\242\48","\196\28\151\73\86\83")]=v7("\253\2\36\21\189\89\11\117","\22\147\99\73\112\226\56\120"),[v7("\172\112\250\225","\237\216\21\130\149")]=v7("\163\3\101","\62\226\46\63\63\208\169"),[v7("\242\16\81\151\23","\62\133\121\53\227\127\109\79")]=5 + 31 }};local v253={};local v254=0 -0 ;for v476,v477 in ipairs(v252) do local v478=Instance.new(v7("\36\17\42\225\244\187\182\4\27\60","\194\112\116\82\149\182\206"));v478.Name=v7("\10\167\94\12\255","\110\89\200\44\120\160\130")   .. v477.key ;v478.Size=UDim2.new(0 -0 ,v477.width,591 -(562 + 29) ,19 + 3 );v478.Position=UDim2.new(0,v254,0,1422 -(374 + 1045) );v478.BackgroundColor3=((v46==v477.key) and v27.accent) or v27.searchBg ;v478.Text=v477.text;v478.Font=Enum.Font.GothamSemibold;v478.TextSize=8 + 1 ;v478.TextColor3=((v46==v477.key) and Color3.new(2 -1 ,639 -(448 + 190) ,1 + 0 )) or v27.textDim ;v478.AutoButtonColor=false;v478.BorderSizePixel=0;v478.Parent=v246;Instance.new(v7("\158\234\104\73\81\68\62\95","\45\203\163\43\38\35\42\91"),v478).CornerRadius=UDim.new(0,3 + 3 );local v493=v477.key;v478.MouseButton1Click:Connect(function() local v877=0 + 0 ;while true do if ((0 -0)==v877) then v46=v493;for v1097,v1098 in pairs(v253) do local v1099=0;local v1100;while true do if (v1099==(0 -0)) then v1100=1494 -(1307 + 187) ;while true do if (v1100==(0 -0)) then v1098.BackgroundColor3=((v1097==v493) and v27.accent) or v27.searchBg ;v1098.TextColor3=((v1097==v493) and Color3.new(2 -1 ,2 -1 ,684 -(232 + 451) )) or v27.textDim ;break;end end break;end end end v877=1 + 0 ;end if (v877==1) then if (v44==v7("\208\138\211\55\143","\52\178\229\188\67\231\201")) then v52();else v53();end break;end end end);v253[v477.key]=v478;v254=v254 + v477.width + 3 + 0 ;end local v255=Instance.new(v7("\21\68\72\16\219\93\33\36\77","\67\65\33\48\100\151\60"));v255.Name=v7("\239\245\167\219\246\239\228\186\244\242\221\226\162","\147\191\135\206\184");v255.Size=UDim2.new(564 -(510 + 54) ,110 -55 ,36 -(13 + 23) ,54 -26 );v255.Position=UDim2.new(1 -0 , -(218 -98),1088 -(830 + 258) ,3 -2 );v255.BackgroundTransparency=1 + 0 ;v255.Text=v7("\172\41\180\198\217\22\232","\210\228\72\198\161\184\51");v255.TextColor3=v27.textDim;v255.Font=Enum.Font.Gotham;v255.TextSize=9 + 1 ;v255.TextXAlignment=Enum.TextXAlignment.Right;v255.Parent=v218;local v267=Instance.new(v7("\2\76\235\4\81\193\46","\174\86\41\147\112\19"));v267.Name=v7("\107\18\132\8\32\63\18\191\121\15\149","\203\59\96\237\107\69\111\113");v267.Size=UDim2.new(1441 -(860 + 581) ,147 -107 ,0,24);v267.Position=UDim2.new(1 + 0 , -62,241 -(237 + 4) ,6 -3 );v267.BackgroundColor3=v27.searchBg;v267.Text=tostring(v24);v267.TextColor3=v27.gold;v267.Font=Enum.Font.GothamSemibold;v267.TextSize=11;v267.ClearTextOnFocus=true;v267.BorderSizePixel=0;v267.Parent=v218;Instance.new(v7("\17\63\143\238\35\254\210\54","\183\68\118\204\129\81\144"),v267).CornerRadius=UDim.new(0 -0 ,6);local v280=Instance.new(v7("\58\168\104\240\39\131\12\168\124","\226\110\205\16\132\107"));v280.Size=UDim2.new(0 -0 ,16,0 + 0 ,17 + 11 );v280.Position=UDim2.new(3 -2 , -20,0,1 + 0 );v280.BackgroundTransparency=1 + 0 ;v280.Text="%";v280.TextColor3=v27.textDim;v280.Font=Enum.Font.GothamBold;v280.TextSize=11;v280.Parent=v218;local v289=1458 -(85 + 1341) ;local v290=Instance.new(v7("\205\209\225\212\68","\33\139\163\128\185"));v290.Name=v7("\116\89\16\219\80\87\22\199\117\89\22","\190\55\56\100");v290.Size=UDim2.new(1, -(34 -14),0 -0 ,v289);v290.Position=UDim2.new(372 -(45 + 327) ,10,0 -0 ,622 -(444 + 58) );v290.BackgroundTransparency=1;v290.Visible=false;v290.Parent=v85;local v297=Instance.new(v7("\101\172\46\17\31\239\250\88\168\26\12\18\238\246","\147\54\207\92\126\115\131"));v297.Name=v7("\46\48\33\78\14\108\2\61\57","\30\109\81\85\29\109");v297.Size=UDim2.new(1 + 0 ,0 + 0 ,1,0);v297.BackgroundTransparency=1 + 0 ;v297.BorderSizePixel=0 -0 ;v297.ScrollBarThickness=1732 -(64 + 1668) ;v297.ScrollingDirection=Enum.ScrollingDirection.X;v297.CanvasSize=UDim2.new(1973 -(1227 + 746) ,0,0 -0 ,0);v297.AutomaticCanvasSize=Enum.AutomaticSize.X;v297.Parent=v290;local v309=Instance.new(v7("\202\88\120\191\37\202\208\254\104\91\163\34","\156\159\17\52\214\86\190"));v309.FillDirection=Enum.FillDirection.Horizontal;v309.Padding=UDim.new(0 -0 ,499 -(415 + 79) );v309.SortOrder=Enum.SortOrder.LayoutOrder;v309.VerticalAlignment=Enum.VerticalAlignment.Center;v309.Parent=v297;local v318={[v7("\136\230\174\180","\220\206\143\221")]="🐟",[v7("\160\116\62\31\209\194\213\198\79\34\19\203","\178\230\29\77\119\184\172")]="🎣",[v7("\215\177\11\15\100","\152\149\222\106\123\23")]="🚤",[v7("\248\43\249\87\176\206","\213\189\70\150\35")]="💃",[v7("\106\91\119\0\78\91\96\72\124\65\123\6\74\70","\104\47\53\20")]="💎",[v7("\139\77\149\15","\111\195\44\225\124\220")]="🎩",[v7("\235\78\15\118\184","\203\184\38\96\19\203")]="👟",[v7("\10\123\112\83\218\42","\174\89\19\25\33")]="👕",[v7("\31\19\92\90\228","\107\79\114\50\46\151\231")]="👖",[v7("\13\169\186\37\153","\160\89\198\213\73\234\89\215")]="🔧",[v7("\105\114\183\251\214\91\126\166\247\192\91","\165\40\17\212\158")]="💍",[v7("\199\216\11\56\54\228\218\3\32","\70\133\185\104\83")]="🎒",[v7("\34\80\86\36\192\16\80\86\47","\169\100\37\36\74")]="🪑",[v7("\52\136\187\67","\48\96\231\194")]="🧸",[v7("\250\95\29\34\12\202\172\134\219","\227\168\58\110\77\121\184\207")]="📦"};local v319={};function v55(v495) local v496=0 + 0 ;local v497;while true do if (v496==0) then v497=491 -(142 + 349) ;while true do if (v497==(0 + 0)) then v45=v495;for v1223,v1224 in pairs(v319) do if (v1223==v495) then v1224.BackgroundColor3=v27.accent;v1224.TextColor3=Color3.new(1,1,1 -0 );else local v1284=0 + 0 ;while true do if (v1284==(0 + 0)) then v1224.BackgroundColor3=v27.searchBg;v1224.TextColor3=v27.textDim;break;end end end end break;end end break;end end end function v54(v498) local v499="";local v500={};for v878,v879 in pairs(v498) do local v880=0 -0 ;while true do if (v880==(1864 -(1710 + 154))) then table.insert(v500,{[v7("\117\61\178\69","\197\27\92\223\32\209\187\17")]=v878,[v7("\0\80\214\245\23","\155\99\63\163")]=v879});v499=v499   .. v878   .. ":"   .. v879   .. ";" ;break;end end end if (v499==v51) then return;end v51=v499;for v881,v882 in ipairs(v297:GetChildren()) do if v882:IsA(v7("\182\212\185\153\155\145\150\197\174\131","\228\226\177\193\237\217")) then v882:Destroy();end end v319={};local v501=Instance.new(v7("\0\181\59\242\22\165\55\242\59\190","\134\84\208\67"));v501.Name=v7("\48\173\146\99\50\160\138","\60\115\204\230");v501.Size=UDim2.new(318 -(200 + 118) ,60,0 + 0 ,41 -17 );v501.BackgroundColor3=((v45==nil) and v27.accent) or v27.searchBg ;v501.Text="📋 Semua";v501.Font=Enum.Font.GothamSemibold;v501.TextSize=14 -4 ;v501.TextColor3=((v45==nil) and Color3.new(1 + 0 ,1,1)) or v27.textDim ;v501.AutoButtonColor=false;v501.BorderSizePixel=0 + 0 ;v501.LayoutOrder=0 + 0 ;v501.Parent=v297;Instance.new(v7("\210\19\200\127\245\52\238\98","\16\135\90\139"),v501).CornerRadius=UDim.new(0 + 0 ,25 -13 );v319[v7("\107\75\39\31\98\107\71","\24\52\20\102\83\46\52")]=v501;v501.MouseButton1Click:Connect(function() v45=nil;v55(nil);v501.BackgroundColor3=v27.accent;v501.TextColor3=Color3.new(1,1251 -(363 + 887) ,1 -0 );if v53 then v53();end end);table.sort(v500,function(v886,v887) return v886.name<v887.name ;end);for v888,v889 in ipairs(v500) do local v890=v318[v889.name] or "📁" ;local v891=v890   .. " "   .. v889.name   .. v7("\132\103","\111\164\79\65\68")   .. v889.count   .. ")" ;local v892=math.max( #v891 * (28 -22) ,70);local v893=Instance.new(v7("\242\220\155\202\12\255\210\205\140\208","\138\166\185\227\190\78"));v893.Name=v7("\232\117\209\8","\121\171\20\165\87\50\67")   .. v889.name ;v893.Size=UDim2.new(0 + 0 ,v892,0 -0 ,17 + 7 );v893.BackgroundColor3=((v45==v889.name) and v27.accent) or v27.searchBg ;v893.Text=v891;v893.Font=Enum.Font.GothamSemibold;v893.TextSize=1673 -(674 + 990) ;v893.TextColor3=((v45==v889.name) and Color3.new(1 + 0 ,1 + 0 ,1)) or v27.textDim ;v893.AutoButtonColor=false;v893.BorderSizePixel=0;v893.LayoutOrder=v888;v893.Parent=v297;Instance.new(v7("\243\17\154\57\171\12\195\42","\98\166\88\217\86\217"),v893).CornerRadius=UDim.new(0,18 -6 );v319[v889.name]=v893;v893.MouseEnter:Connect(function() if (v45~=v889.name) then v30(v893,{[v7("\212\247\122\10\129\206\249\227\119\5\165\211\250\249\107\82","\188\150\150\25\97\230")]=v27.cardBgHover},1055.15 -(507 + 548) );end end);v893.MouseLeave:Connect(function() if (v45~=v889.name) then v30(v893,{[v7("\248\136\92\9\11\255\213\156\81\6\47\226\214\134\77\81","\141\186\233\63\98\108")]=v27.searchBg},0.15);end end);local v908=v889.name;v893.MouseButton1Click:Connect(function() v55(v908);v501.BackgroundColor3=v27.searchBg;v501.TextColor3=v27.textDim;if v53 then v53();end end);end end local v320=959 -(289 + 548) ;local v321=(1940 -(821 + 997)) + v289 + 4 ;local v322=Instance.new(v7("\194\233\62\185\41\253\227\34\177\3\227\235\33\179","\69\145\138\76\214"));v322.Name=v7("\89\219\140\132\140\21\98\192\133\133","\118\16\175\233\233\223");v322.Size=UDim2.new(256 -(195 + 60) , -(6 + 14),1, -(1661 -(251 + 1250)));v322.Position=UDim2.new(0 -0 ,7 + 3 ,0,v320);v322.BackgroundTransparency=1;v322.CanvasSize=UDim2.new(1032 -(809 + 223) ,0 -0 ,0,0 -0 );v322.ScrollBarThickness=13 -9 ;v322.ScrollBarImageColor3=v27.accent;v322.BorderSizePixel=0 + 0 ;v322.Parent=v85;local v332=Instance.new(v7("\190\173\25\178\253\159\81\138\157\58\174\250","\29\235\228\85\219\142\235"));v332.Parent=v322;v332.Padding=UDim.new(0 + 0 ,5);v332.SortOrder=Enum.SortOrder.LayoutOrder;local v336=Instance.new(v7("\27\198\187\208\114","\50\93\180\218\189\23\46\71"));v336.Name=v7("\237\176\90\88\81\207\106\223\182","\40\190\196\59\44\36\188");v336.Size=UDim2.new(618 -(14 + 603) ,129 -(118 + 11) ,0 + 0 ,24 + 4 );v336.Position=UDim2.new(0 -0 ,949 -(551 + 398) ,1 + 0 , -28);v336.BackgroundColor3=v27.topBar;v336.BorderSizePixel=0 + 0 ;v336.Parent=v85;Instance.new(v7("\9\108\255\187\232\115\8\46","\109\92\37\188\212\154\29"),v336).CornerRadius=UDim.new(0 + 0 ,29 -21 );local v344=Instance.new(v7("\34\253\165\206\52","\58\100\143\196\163\81"));v344.Size=UDim2.new(2 -1 ,0 + 0 ,0,39 -29 );v344.Position=UDim2.new(0 + 0 ,89 -(40 + 49) ,0 -0 ,0);v344.BackgroundColor3=v27.topBar;v344.BorderSizePixel=490 -(99 + 391) ;v344.Parent=v336;local v350=Instance.new(v7("\46\71\59\183\19\72\231\11\22","\110\122\34\67\195\95\41\133"));v350.Name=v7("\70\165\90\94\195\102\133\94\82\194","\182\21\209\59\42");v350.Size=UDim2.new(0.65 + 0 ,0 -0 ,2 -1 ,0 + 0 );v350.Position=UDim2.new(0 -0 ,1616 -(1032 + 572) ,0,417 -(203 + 214) );v350.BackgroundTransparency=1;v350.Text=v7("\133\82\196\25\56","\222\215\55\165\125\65");v350.TextColor3=v27.textDim;v350.TextXAlignment=Enum.TextXAlignment.Left;v350.Font=Enum.Font.Gotham;v350.TextSize=11;v350.Parent=v336;local v361=Instance.new(v7("\24\212\222\14\222\192\239\79\32","\42\76\177\166\122\146\161\141"));v361.Name=v7("\150\158\4\218\106\66\160\146\17","\22\197\234\101\174\25");v361.Size=UDim2.new(1817.35 -(568 + 1249) , -(10 + 2),2 -1 ,0 -0 );v361.Position=UDim2.new(0.65,1306 -(913 + 393) ,0 -0 ,0 -0 );v361.BackgroundTransparency=1;v361.Text="";v361.TextColor3=v27.textMuted;v361.TextXAlignment=Enum.TextXAlignment.Right;v361.Font=Enum.Font.Gotham;v361.TextSize=420 -(269 + 141) ;v361.Parent=v336;local v372,v373=1112 -612 ,2361 -(362 + 1619) ;local v374,v375=950,750;local v376=Instance.new(v7("\25\49\189\200\84\186\195\146\34\58","\230\77\84\197\188\22\207\183"));v376.Name=v7("\203\17\213\245\150\164\216\52\247\16\202\249","\85\153\116\166\156\236\193\144");v376.Size=UDim2.new(0,1647 -(950 + 675) ,0 + 0 ,1201 -(216 + 963) );v376.Position=UDim2.new(1288 -(485 + 802) , -(581 -(432 + 127)),1, -(1095 -(1065 + 8)));v376.BackgroundColor3=v27.divider;v376.BackgroundTransparency=0.5;v376.Text="⇲";v376.TextSize=8 + 6 ;v376.TextColor3=v27.textMuted;v376.Font=Enum.Font.GothamBold;v376.AutoButtonColor=false;v376.BorderSizePixel=1601 -(635 + 966) ;v376.ZIndex=8 + 2 ;v376.Parent=v85;Instance.new(v7("\145\201\110\188\246\14\161\242","\96\196\128\45\211\132"),v376).CornerRadius=UDim.new(0,46 -(5 + 37) );v376.MouseEnter:Connect(function() v30(v376,{[v7("\23\140\120\84\213\189\187\205\59\137\79\77\211\161\167\200\52\159\126\81\209\182","\184\85\237\27\63\178\207\212")]=0 -0 ,[v7("\60\92\17\75\43\86\5\80\26\10","\63\104\57\105")]=v27.accent},0.15 + 0 );end);v376.MouseLeave:Connect(function() v30(v376,{[v7("\41\134\167\79\12\149\171\81\5\131\144\86\10\137\183\84\10\149\161\74\8\158","\36\107\231\196")]=0.5 -0 ,[v7("\105\176\186\147\126\186\174\136\79\230","\231\61\213\194")]=v27.textMuted},0.15 + 0 );end);do local v516=0 -0 ;local v517;local v518;local v519;while true do if (v516==(3 -2)) then v11.InputChanged:Connect(function(v1080) if (v517 and ((v1080.UserInputType==Enum.UserInputType.MouseMovement) or (v1080.UserInputType==Enum.UserInputType.Touch))) then local v1173=0 -0 ;local v1174;while true do if (v1173==(0 -0)) then v1174=v1080.Position-v518 ;v85.Size=UDim2.new(0 + 0 ,math.clamp(v519.X + v1174.X ,v372,v374),0,math.clamp(v519.Y + v1174.Y ,v373,v375));break;end end end end);break;end if (v516==(529 -(318 + 211))) then v517,v518,v519=false,nil,nil;v376.InputBegan:Connect(function(v1081) if ((v1081.UserInputType==Enum.UserInputType.MouseButton1) or (v1081.UserInputType==Enum.UserInputType.Touch)) then local v1175=0 -0 ;local v1176;while true do if (v1175==(1587 -(963 + 624))) then v1176=0;while true do if (v1176==(1 + 0)) then v519=v85.AbsoluteSize;v1081.Changed:Connect(function() if (v1081.UserInputState==Enum.UserInputState.End) then v517=false;end end);break;end if (v1176==0) then v517=true;v518=v1081.Position;v1176=1;end end break;end end end end);v516=1;end end end do local v520=0;local v521;local v522;local v523;local v524;while true do if (v520==(847 -(518 + 328))) then v114.InputChanged:Connect(function(v1082) if ((v1082.UserInputType==Enum.UserInputType.MouseMovement) or (v1082.UserInputType==Enum.UserInputType.Touch)) then v522=v1082;end end);v11.InputChanged:Connect(function(v1083) if ((v1083==v522) and v521) then local v1177=0 -0 ;local v1178;while true do if (v1177==(0 -0)) then v1178=v1083.Position-v523 ;v85.Position=UDim2.new(v524.X.Scale,v524.X.Offset + v1178.X ,v524.Y.Scale,v524.Y.Offset + v1178.Y );break;end end end end);break;end if (v520==(317 -(301 + 16))) then v521,v522,v523,v524=nil;v114.InputBegan:Connect(function(v1084) if ((v1084.UserInputType==Enum.UserInputType.MouseButton1) or (v1084.UserInputType==Enum.UserInputType.Touch)) then local v1179=0 -0 ;while true do if (v1179==(0 -0)) then v521=true;v523=v1084.Position;v1179=2 -1 ;end if (v1179==(1 + 0)) then v524=v85.Position;v1084.Changed:Connect(function() if (v1084.UserInputState==Enum.UserInputState.End) then v521=false;end end);break;end end end end);v520=1 + 0 ;end end end local v391=false;local v392=UDim2.new(0 -0 ,386 + 254 ,0 + 0 ,1844 -1264 );local function v393() local v525=0 + 0 ;while true do if (v525==(1019 -(829 + 190))) then if v391 then return;end v391=true;v525=3 -2 ;end if (4==v525) then v30(v63,{[v7("\154\1\196\132","\95\201\104\190\225")]=UDim2.new(0 -0 ,69 -19 ,0 -0 ,12 + 38 )},0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out);break;end if (v525==(1 + 0)) then v392=v85.Size;v30(v85,{[v7("\58\164\39\118","\19\105\205\93")]=UDim2.new(0 -0 ,0 + 0 ,613 -(520 + 93) ,276 -(259 + 17) )},0.3,Enum.EasingStyle.Back,Enum.EasingDirection.In);v525=2;end if (v525==(1 + 1)) then task.wait(0.3);v85.Visible=false;v525=3;end if (v525==(2 + 1)) then v63.Visible=true;v63.Size=UDim2.new(0 -0 ,591 -(396 + 195) ,0,0);v525=11 -7 ;end end end local function v394() local v526=1761 -(440 + 1321) ;while true do if (2==v526) then v63.Visible=false;v85.Visible=true;v526=1832 -(1059 + 770) ;end if ((4 -3)==v526) then v30(v63,{[v7("\156\194\219\203","\174\207\171\161")]=UDim2.new(545 -(424 + 121) ,0 + 0 ,1347 -(641 + 706) ,0)},0.2,Enum.EasingStyle.Back,Enum.EasingDirection.In);task.wait(0.2 + 0 );v526=442 -(249 + 191) ;end if (3==v526) then v85.Size=UDim2.new(0 -0 ,0,0 + 0 ,0 -0 );v30(v85,{[v7("\222\247\23\246","\183\141\158\109\147\152")]=v392},427.3 -(183 + 244) ,Enum.EasingStyle.Back,Enum.EasingDirection.Out);break;end if (v526==(0 + 0)) then if  not v391 then return;end v391=false;v526=731 -(434 + 296) ;end end end v63.MouseButton1Click:Connect(v394);v177.MouseButton1Click:Connect(v393);v176.MouseButton1Click:Connect(function() local v527=0 -0 ;while true do if (v527==(512 -(169 + 343))) then v30(v85,{[v7("\31\0\252\9","\108\76\105\134")]=UDim2.new(0 + 0 ,0 -0 ,0 -0 ,0 + 0 )},0.25 -0 ,Enum.EasingStyle.Back,Enum.EasingDirection.In);task.wait(0.25);v527=1;end if (v527==1) then v56:Destroy();break;end end end);local function v395(v528,v529) local v530=0;local v531;local v532;local v533;while true do if (v530==(1125 -(651 + 472))) then v532.BackgroundTransparency=1 + 0 ;v532.LayoutOrder= -(1 + 0);v532.Parent=v322;v530=3 -0 ;end if ((486 -(397 + 86))==v530) then v533=Instance.new(v7("\201\35\29\6\37\33\255\35\9","\64\157\70\101\114\105"));v533.Size=UDim2.new(877 -(423 + 453) ,0 + 0 ,1,0 + 0 );v533.BackgroundTransparency=1 + 0 ;v530=4 + 0 ;end if (v530==5) then v533.TextSize=14;v533.Parent=v532;break;end if (v530==(4 + 0)) then v533.Text=v529 or "⏳ Memuat data..." ;v533.TextColor3=v27.textDim;v533.Font=Enum.Font.GothamSemibold;v530=1195 -(50 + 1140) ;end if (v530==(1 + 0)) then v532=Instance.new(v7("\133\161\227\204\195","\24\195\211\130\161\166\99\16"));v532.Name=v7("\106\12\232\40\90\24\65\37\251\45\94\19","\118\38\99\137\76\51");v532.Size=UDim2.new(1 + 0 ,0 + 0 ,0 -0 ,60);v530=2 + 0 ;end if (v530==0) then v531=v322:FindFirstChild(v7("\199\202\176\229\199\229\194\151\243\207\230\192","\174\139\165\209\129"));if v531 then v531:Destroy();end if  not v528 then return;end v530=597 -(157 + 439) ;end end end local function v396(v534) local v535=0 -0 ;local v536;local v537;while true do if (v535==(12 -8)) then v537.TextSize=38 -25 ;v537.Parent=v536;break;end if (v535==(918 -(782 + 136))) then local v1039=855 -(112 + 743) ;while true do if (v1039==0) then v536=Instance.new(v7("\102\186\166\238\21","\112\32\200\199\131"));v536.Name=v7("\9\93\76\172\218\141\48\45\93\89","\66\76\48\60\216\163\203");v1039=1;end if (1==v1039) then v536.Size=UDim2.new(1172 -(1026 + 145) ,0 + 0 ,718 -(493 + 225) ,367 -267 );v535=1 + 0 ;break;end end end if (v535==(2 -1)) then local v1040=0 + 0 ;while true do if (v1040==0) then v536.BackgroundTransparency=1;v536.LayoutOrder=0;v1040=2 -1 ;end if (v1040==(1 + 0)) then v536.Parent=v322;v535=2 -0 ;break;end end end if (v535==(1597 -(210 + 1385))) then v537=Instance.new(v7("\142\131\97\231\115\207\38\191\138","\68\218\230\25\147\63\174"));v537.Size=UDim2.new(1,1689 -(1201 + 488) ,1 + 0 ,0 -0 );v537.BackgroundTransparency=1 -0 ;v535=3;end if ((588 -(352 + 233))==v535) then v537.Text=v534 or "📭 Tidak ada item." ;v537.TextColor3=v27.textMuted;v537.Font=Enum.Font.Gotham;v535=9 -5 ;end end end local function v397() for v909,v910 in ipairs(v322:GetChildren()) do if v910:IsA(v7("\139\56\82\65\179","\214\205\74\51\44")) then v910:Destroy();end end end local function v398(v538,v539,v540,v541) if v48 then return;end v48=true;local v542=Instance.new(v7("\220\94\227\241\114","\23\154\44\130\156"));v542.Name=v7("\50\169\163\168\63\1\28\137\187\171\36\31\16\191","\115\113\198\205\206\86");v542.Size=UDim2.new(1 + 0 ,0 -0 ,575 -(489 + 85) ,0);v542.BackgroundColor3=Color3.fromRGB(1501 -(277 + 1224) ,0,0);v542.BackgroundTransparency=0.5;v542.BorderSizePixel=1493 -(663 + 830) ;v542.ZIndex=44 + 6 ;v542.Parent=v85;local v550=Instance.new(v7("\162\69\255\87\129","\58\228\55\158"));v550.Name=v7("\144\128\209\34\51\170\23\187\145","\85\212\233\176\78\92\205");v550.Size=UDim2.new(0 -0 ,1195 -(461 + 414) ,0 + 0 ,170);v550.Position=UDim2.new(0.5 + 0 , -160,0.5 + 0 , -(84 + 1));v550.BackgroundColor3=v27.bgSecondary;v550.BorderSizePixel=0;v550.ZIndex=301 -(172 + 78) ;v550.Parent=v542;Instance.new(v7("\127\113\171\237\88\86\141\240","\130\42\56\232"),v550).CornerRadius=UDim.new(0 -0 ,12);local v560=Instance.new(v7("\223\156\23\247\82\48\225\176","\95\138\213\68\131\32"));v560.Thickness=1.5 + 0 ;v560.Color=v27.accent;v560.Transparency=0.3 -0 ;v560.Parent=v550;local v566=Instance.new(v7("\30\45\185\87\90\43\42\164\79","\22\74\72\193\35"));v566.Size=UDim2.new(1 + 0 , -(7 + 13),0 -0 ,34 -6 );v566.Position=UDim2.new(0 + 0 ,6 + 4 ,0,5 + 7 );v566.BackgroundTransparency=3 -2 ;v566.Text=v538 or v7("\7\118\234\94\37\107\233\89\63\112","\56\76\25\132") ;v566.TextColor3=v27.gold;v566.Font=Enum.Font.GothamBold;v566.TextSize=34 -19 ;v566.TextXAlignment=Enum.TextXAlignment.Center;v566.ZIndex=16 + 36 ;v566.Parent=v550;local v580=Instance.new(v7("\120\211\170\43\202","\175\62\161\203\70"));v580.Size=UDim2.new(1 + 0 , -20,447 -(133 + 314) ,1);v580.Position=UDim2.new(0 + 0 ,223 -(199 + 14) ,0 -0 ,1593 -(647 + 902) );v580.BackgroundColor3=v27.divider;v580.BorderSizePixel=0 -0 ;v580.ZIndex=285 -(85 + 148) ;v580.Parent=v550;local v588=Instance.new(v7("\8\216\219\7\25\61\223\198\31","\85\92\189\163\115"));v588.Size=UDim2.new(1290 -(426 + 863) , -24,0 -0 ,55);v588.Position=UDim2.new(1654 -(873 + 781) ,15 -3 ,0 -0 ,48);v588.BackgroundTransparency=1 + 0 ;v588.Text=v539 or v7("\8\188\49\51\40\164\112\51\40\161\37\120\48\173\59\49\39\243","\88\73\204\80") ;v588.TextColor3=v27.text;v588.Font=Enum.Font.Gotham;v588.TextSize=44 -32 ;v588.TextWrapped=true;v588.TextXAlignment=Enum.TextXAlignment.Center;v588.ZIndex=52;v588.Parent=v550;local v602=Instance.new(v7("\26\134\8\82\11\207\58\151\31\72","\186\78\227\112\38\73"));v602.Size=UDim2.new(0 -0 ,356 -236 ,1947 -(414 + 1533) ,34);v602.Position=UDim2.new(0.5 + 0 , -(685 -(443 + 112)),1, -(1529 -(888 + 591)));v602.BackgroundColor3=v27.green;v602.Text="✅ Ya, Lanjut";v602.Font=Enum.Font.GothamBold;v602.TextSize=30 -18 ;v602.TextColor3=Color3.new(1,1,1 + 0 );v602.AutoButtonColor=false;v602.BorderSizePixel=0 -0 ;v602.ZIndex=52;v602.Parent=v550;Instance.new(v7("\201\126\222\90\65\116\249\69","\26\156\55\157\53\51"),v602).CornerRadius=UDim.new(0 + 0 ,8);local v616=Instance.new(v7("\184\221\14\205\154\69\152\204\25\215","\48\236\184\118\185\216"));v616.Size=UDim2.new(0 + 0 ,13 + 107 ,0 -0 ,62 -28 );v616.Position=UDim2.new(1678.5 -(136 + 1542) ,10,1, -(163 -113));v616.BackgroundColor3=v27.textMuted;v616.Text="❌ Batal";v616.Font=Enum.Font.GothamBold;v616.TextSize=12 + 0 ;v616.TextColor3=Color3.new(1 -0 ,1 + 0 ,487 -(68 + 418) );v616.AutoButtonColor=false;v616.BorderSizePixel=0 -0 ;v616.ZIndex=93 -41 ;v616.Parent=v550;Instance.new(v7("\208\148\116\63\221\58\224\175","\84\133\221\55\80\175"),v616).CornerRadius=UDim.new(0 + 0 ,1100 -(770 + 322) );v602.MouseEnter:Connect(function() v30(v602,{[v7("\159\230\39\173\192\78\178\242\42\162\228\83\177\232\54\245","\60\221\135\68\198\167")]=v27.greenHover},0.15);end);v602.MouseLeave:Connect(function() v30(v602,{[v7("\204\188\251\136\69\203\225\168\246\135\97\214\226\178\234\208","\185\142\221\152\227\34")]=v27.green},0.15);end);v616.MouseEnter:Connect(function() v30(v616,{[v7("\122\196\84\241\68\33\248\77\203\83\217\76\63\248\74\150","\151\56\165\55\154\35\83")]=Color3.fromRGB(110,110,8 + 122 )},0.15 + 0 );end);v616.MouseLeave:Connect(function() v30(v616,{[v7("\130\66\6\229\167\81\10\251\174\71\38\225\172\76\23\189","\142\192\35\101")]=v27.textMuted},0.15 + 0 );end);v550.Size=UDim2.new(0 -0 ,0 -0 ,0,0 -0 );v550.Position=UDim2.new(0.5,0 -0 ,0.5 + 0 ,0 -0 );v542.BackgroundTransparency=1;v30(v542,{[v7("\244\116\42\168\224\158\163\3\216\113\29\177\230\130\191\6\215\103\44\173\228\149","\118\182\21\73\195\135\236\204")]=0.5 + 0 },0.2 + 0 );v30(v550,{[v7("\59\53\0\69","\157\104\92\122\32\100\109")]=UDim2.new(0 + 0 ,1204 -884 ,0 -0 ,170),[v7("\147\169\220\195\41\46\130\165","\203\195\198\175\170\93\71\237")]=UDim2.new(0.5, -(55 + 105),0.5 -0 , -(280 -195))},0.25,Enum.EasingStyle.Back,Enum.EasingDirection.Out);local function v630() local v911=0;while true do if (v911==(0 + 0)) then v30(v550,{[v7("\29\66\36\208","\156\78\43\94\181\49\113")]=UDim2.new(0 -0 ,831 -(762 + 69) ,0 -0 ,0 + 0 ),[v7("\66\231\215\170\31\74\118\124","\25\18\136\164\195\107\35")]=UDim2.new(0.5 + 0 ,0,0.5 -0 ,0)},0.2 + 0 ,Enum.EasingStyle.Back,Enum.EasingDirection.In);v30(v542,{[v7("\202\44\170\68\117\174\206\173\230\41\157\93\115\178\210\168\233\63\172\65\113\165","\216\136\77\201\47\18\220\161")]=1 + 0 },0.2);v911=3 -2 ;end if (v911==1) then task.wait(157.2 -(8 + 149) );if (v542 and v542.Parent) then v542:Destroy();end v911=2;end if ((1322 -(1199 + 121))==v911) then v48=false;break;end end end v602.MouseButton1Click:Connect(function() local v912=0;while true do if (v912==(0 -0)) then v630();if v540 then v540();end break;end end end);v616.MouseButton1Click:Connect(function() local v913=0;while true do if (v913==0) then v630();if v541 then v541();end break;end end end);v542.InputBegan:Connect(function(v914) if ((v914.UserInputType==Enum.UserInputType.MouseButton1) or (v914.UserInputType==Enum.UserInputType.Touch)) then local v1048=0 -0 ;local v1049;local v1050;local v1051;while true do if (v1048==1) then v1051=v914.Position;if ((v1051.X<v1049.X) or (v1051.X>(v1049.X + v1050.X)) or (v1051.Y<v1049.Y) or (v1051.Y>(v1049.Y + v1050.Y))) then local v1242=0 + 0 ;local v1243;while true do if (v1242==(0 -0)) then v1243=0 -0 ;while true do if (v1243==0) then v630();if v541 then v541();end break;end end break;end end end break;end if (v1048==0) then local v1186=0;while true do if (v1186==(0 + 0)) then v1049=v550.AbsolutePosition;v1050=v550.AbsoluteSize;v1186=1;end if (v1186==(1808 -(518 + 1289))) then v1048=1 -0 ;break;end end end end end end);end local function v399(v631) table.sort(v631,function(v915,v916) local v917=0;while true do if (v917==(0 + 0)) then if (v46==v7("\57\229\46\200\55\216\135\62\239","\226\77\140\75\186\104\188")) then local v1187=0;local v1188;while true do if (v1187==(0 -0)) then v1188=0;while true do if (v1188==(0 + 0)) then if ((v915.ItemTier or 0)~=(v916.ItemTier or (469 -(304 + 165)))) then return (v915.ItemTier or (0 + 0))>(v916.ItemTier or (160 -(54 + 106))) ;end return (v915.ItemName or "")<(v916.ItemName or "") ;end end break;end end elseif (v46==v7("\173\199\213\45\112\184\221\211","\47\217\174\176\95")) then local v1244=1969 -(1618 + 351) ;local v1245;while true do if ((0 + 0)==v1244) then v1245=1016 -(10 + 1006) ;while true do if (v1245==(0 + 0)) then local v1351=0;while true do if (v1351==(0 + 0)) then if ((v915.ItemTier or 0)~=(v916.ItemTier or 0)) then return (v915.ItemTier or (0 -0))<(v916.ItemTier or (1033 -(912 + 121))) ;end return (v915.ItemName or "")<(v916.ItemName or "") ;end end end end break;end end elseif (v46==v7("\170\220\102\61\182\81\107\37","\70\216\189\22\98\210\52\24")) then local v1300=0;local v1301;while true do if (v1300==(0 + 0)) then v1301=0;while true do if (v1301==(1289 -(1140 + 149))) then if ((v915.RAP or (0 + 0))~=(v916.RAP or (0 -0))) then return (v915.RAP or (0 + 0))>(v916.RAP or 0) ;end return (v915.ItemName or "")<(v916.ItemName or "") ;end end break;end end elseif (v46==v7("\212\222\174\130\236\219\204\160","\179\186\191\195\231")) then return (v915.ItemName or "")<(v916.ItemName or "") ;end return false;end end end);end local function v400(v632,v633) local v634=Instance.new(v7("\223\45\25\233\252","\132\153\95\120"));v634.Name=v7("\147\189\1\57\255\249\161\163\182\49","\192\209\210\110\77\151\186")   .. v633 ;v634.Size=UDim2.new(3 -2 , -4,0,150 -70 );v634.BackgroundColor3=v27.listedBg;v634.BorderSizePixel=0 + 0 ;v634.LayoutOrder=v633;v634.Parent=v322;v634.ClipsDescendants=true;Instance.new(v7("\213\42\1\230\237\202\229\17","\164\128\99\66\137\159"),v634).CornerRadius=UDim.new(0 -0 ,194 -(165 + 21) );local v644=Instance.new(v7("\53\160\218\170\18\134\226\187","\222\96\233\137"));v644.Thickness=112 -(61 + 50) ;v644.Color=v27.listedBorder;v644.Transparency=0.6;v644.Parent=v634;v634.MouseEnter:Connect(function() v30(v634,{[v7("\155\178\164\20\143\225\255\172\189\163\60\135\255\255\171\224","\144\217\211\199\127\232\147")]=Color3.fromRGB(30,20 + 28 ,309 -244 )},0.15 -0 );end);v634.MouseLeave:Connect(function() v30(v634,{[v7("\218\46\61\35\210\87\13\81\246\43\29\39\217\74\16\23","\36\152\79\94\72\181\37\98")]=v27.listedBg},0.15 + 0 );end);local v650=Instance.new(v7("\227\221\95\43\251\217\69\58\219","\95\183\184\39"));v650.Size=UDim2.new(1460 -(1295 + 165) ,32,0 + 0 ,13 + 19 );v650.Position=UDim2.new(1397 -(819 + 578) ,1410 -(331 + 1071) ,743.5 -(588 + 155) , -(1298 -(546 + 736)));v650.BackgroundColor3=v27.accent;v650.BackgroundTransparency=1937.3 -(1834 + 103) ;v650.Text="🏪";v650.TextSize=10 + 6 ;v650.TextColor3=Color3.new(2 -1 ,1767 -(1536 + 230) ,1);v650.Font=Enum.Font.GothamBold;v650.Parent=v634;Instance.new(v7("\128\22\196\41\70\142\7\167","\98\213\95\135\70\52\224"),v650).CornerRadius=UDim.new(0,6);local v663=Instance.new(v7("\202\166\209\99\120\255\161\204\123","\52\158\195\169\23"));v663.Size=UDim2.new(491 -(128 + 363) ,43 + 157 ,0 -0 ,5 + 13 );v663.Position=UDim2.new(0 -0 ,141 -93 ,0 -0 ,6 + 2 );v663.BackgroundTransparency=1010 -(615 + 394) ;v663.Text=v632.ItemName or v7("\79\178\57\122\137\34\117","\235\26\220\82\20\230\85\27") ;v663.TextColor3=v32[v632.ItemTier] or v27.text ;v663.TextXAlignment=Enum.TextXAlignment.Left;v663.Font=Enum.Font.GothamBold;v663.TextSize=14;v663.TextTruncate=Enum.TextTruncate.AtEnd;v663.Parent=v634;local v676=Instance.new(v7("\188\164\241\214\88\137\163\236\206","\20\232\193\137\162"));v676.Size=UDim2.new(0 + 0 ,191 + 9 ,0,14);v676.Position=UDim2.new(0 -0 ,217 -169 ,0,26);v676.BackgroundTransparency=1;v676.Text=(v31[v632.ItemTier] or "?")   .. " • "   .. (v632.ItemType or "?") ;v676.TextColor3=v27.textDim;v676.TextXAlignment=Enum.TextXAlignment.Left;v676.Font=Enum.Font.Gotham;v676.TextSize=10;v676.Parent=v634;local v688={};if (v632.RAP and (v632.RAP>0)) then local v954=651 -(59 + 592) ;local v955;while true do if (v954==(0 -0)) then v955=math.floor((v632.Price/v632.RAP) * (184 -84) );table.insert(v688,string.format(v7("\16\254\245\252\167\201\4\49\106\154\193\227\162\197","\17\66\191\165\198\135\236\119"),v29(v632.RAP),v955));break;end end else table.insert(v688,v7("\61\142\158\73\191\165","\177\111\207\206\115\159\136\140"));end if (v632.ALP and v632.ALP.avg and (v632.ALP.avg>0)) then local v956=0;local v957;while true do if (v956==0) then v957=math.floor((v632.Price/v632.ALP.avg) * (71 + 29) );table.insert(v688,string.format(v7("\36\165\32\78\148\10\76\69\193\85\16\145\10\22","\63\101\233\112\116\180\47"),v29(v632.ALP.avg),v957));break;end end end local v689=Instance.new(v7("\247\62\245\6\212\55\193\62\225","\86\163\91\141\114\152"));v689.Size=UDim2.new(0,471 -(70 + 101) ,0,14);v689.Position=UDim2.new(0 -0 ,35 + 13 ,0,110 -66 );v689.BackgroundTransparency=1;v689.Text=table.concat(v688," │ ");v689.TextColor3=v27.textDim;v689.TextXAlignment=Enum.TextXAlignment.Left;v689.Font=Enum.Font.Gotham;v689.TextSize=251 -(123 + 118) ;v689.Parent=v634;local v699=Instance.new(v7("\103\14\108\103\22\82\9\113\127","\90\51\107\20\19"));v699.Size=UDim2.new(0 + 0 ,2 + 88 ,1399 -(653 + 746) ,37 -17 );v699.Position=UDim2.new(1 -0 , -(722 -452),0,4 + 4 );v699.BackgroundTransparency=1 + 0 ;v699.Text=v28(v632.Price)   .. v7("\205\196","\93\237\144\229\143") ;v699.TextColor3=v27.gold;v699.TextXAlignment=Enum.TextXAlignment.Right;v699.Font=Enum.Font.GothamBold;v699.TextSize=14;v699.Parent=v634;local v711=Instance.new(v7("\33\243\232\13\41\73\13","\38\117\150\144\121\107"));v711.Size=UDim2.new(0,70,0 + 0 ,3 + 21 );v711.Position=UDim2.new(1 + 0 , -270,0,92 -54 );v711.BackgroundColor3=v27.inputBg;v711.Text=tostring(v632.Price);v711.PlaceholderText=v7("\5\186\252\61\44\251\236\59\63\174","\90\77\219\142");v711.PlaceholderColor3=v27.textMuted;v711.TextColor3=v27.text;v711.Font=Enum.Font.Gotham;v711.TextSize=11 + 0 ;v711.ClearTextOnFocus=true;v711.BorderSizePixel=0 -0 ;v711.Parent=v634;Instance.new(v7("\211\45\2\54\94\9\127\244","\26\134\100\65\89\44\103"),v711).CornerRadius=UDim.new(1234 -(885 + 349) ,4 + 0 );local v728=Instance.new(v7("\197\230\40\55\134\228\247\36\44\170","\196\145\131\80\67"));v728.Size=UDim2.new(0,72,0,28);v728.Position=UDim2.new(1, -(463 -293),0.5 -0 , -(982 -(915 + 53)));v728.BackgroundColor3=v27.accent;v728.Text="📝 Update";v728.Font=Enum.Font.GothamBold;v728.TextSize=812 -(768 + 33) ;v728.TextColor3=Color3.new(3 -2 ,1,1 -0 );v728.AutoButtonColor=false;v728.BorderSizePixel=0;v728.Parent=v634;Instance.new(v7("\43\153\37\7\10\230\27\162","\136\126\208\102\104\120"),v728).CornerRadius=UDim.new(0,6);v728.MouseEnter:Connect(function() v30(v728,{[v7("\90\139\205\72\168\64\50\68\118\142\237\76\163\93\47\2","\49\24\234\174\35\207\50\93")]=v27.accentHover},328.15 -(287 + 41) );end);v728.MouseLeave:Connect(function() v30(v728,{[v7("\46\243\254\131\118\30\253\232\134\117\47\253\241\135\99\95","\17\108\146\157\232")]=v27.accent},847.15 -(638 + 209) );end);v728.MouseButton1Click:Connect(function() if v48 then return;end local v918=tonumber(v711.Text);if ( not v918 or (v918<=(0 + 0))) then v350.Text="❌ Harga tidak valid!";return;end v398("📝 Update Harga",string.format("Update harga %s\ndari %s T → %s T?",v632.ItemName or v7("\66\215\17\224","\200\43\163\116\141\79") ,v28(v632.Price),v28(v918)),function() v728.Text="⏳...";v350.Text="📝 Mengupdate harga "   .. (v632.ItemName or v7("\182\34\56\142","\131\223\86\93\227\208\148"))   .. v7("\173\11\248","\213\131\37\214\214\125") ;task.spawn(function() local v1053=1686 -(96 + 1590) ;local v1054;local v1055;local v1056;local v1057;while true do if (v1053==(1674 -(741 + 931))) then if v1056 then v728.Text="✅ OK";v699.Text=v28(v918)   .. v7("\144\182","\180\176\226\217\147\99\131") ;v350.Text="✅ Harga "   .. (v632.ItemName or v7("\218\173\42\10","\103\179\217\79"))   .. v7("\10\179\21\192\81\136\162\94\178\92\222\68\204","\195\42\215\124\181\33\236")   .. v28(v918) ;v174();else local v1249=0 + 0 ;local v1250;while true do if (v1249==0) then v1250=tostring(v1057):lower();if (v1250:find(v7("\3\86\35\126\35\247\24\87\51","\152\109\57\87\94\69")) or v1250:find(v7("\240\217\28\162\178\219\80","\200\153\183\106\195\222\178\52")) or v1250:find(v7("\33\236\132\57","\58\82\131\232\93\41"))) then local v1345=0 -0 ;while true do if (v1345==(0 -0)) then v728.Text="⚠️ Terjual?";v350.Text="⚠️ Item mungkin sudah terjual saat proses update!";break;end end else local v1346=0 + 0 ;local v1347;while true do if (v1346==(0 + 0)) then v1347=0 + 0 ;while true do if (v1347==(0 -0)) then v728.Text="❌ Gagal";v350.Text="❌ Gagal re-list: "   .. tostring(v1057) ;break;end end break;end end end break;end end end task.wait(1 + 1 );v1053=2 + 1 ;end if (v1053==(12 -9)) then v728.Text="📝 Update";break;end if (v1053==(0 + 0)) then v1054,v1055=pcall(function() return v16.Remotes.DeleteSaleListing:InvokeServer(v7("\4\36\42\171\233","\129\70\75\69\223"),v632.ListingKey);end);if  not v1054 then local v1251=0;while true do if ((494 -(64 + 430))==v1251) then v728.Text="❌ Gagal";v350.Text="❌ Gagal hapus: "   .. tostring(v1055) ;v1251=1 + 0 ;end if ((365 -(106 + 257))==v1251) then return;end if (v1251==1) then task.wait(2);v728.Text="📝 Update";v1251=2 + 0 ;end end end v1053=722 -(496 + 225) ;end if (v1053==(1 -0)) then task.wait(v23);v1056,v1057=pcall(function() return v16.Remotes.CreateSaleListing:InvokeServer(v7("\100\196\252\253\116","\143\38\171\147\137\28"),v632.ItemType,v632.UUID,v918);end);v1053=9 -7 ;end end end);end);end);local v740=Instance.new(v7("\183\82\200\1\127\42\151\67\223\27","\95\227\55\176\117\61"));v740.Size=UDim2.new(0,66,1658 -(256 + 1402) ,1927 -(30 + 1869) );v740.Position=UDim2.new(1, -88,1369.5 -(213 + 1156) , -(202 -(96 + 92)));v740.BackgroundColor3=v27.red;v740.Text="🗑️ Hapus";v740.Font=Enum.Font.GothamBold;v740.TextSize=2 + 9 ;v740.TextColor3=Color3.new(900 -(142 + 757) ,1 + 0 ,1 + 0 );v740.AutoButtonColor=false;v740.BorderSizePixel=0;v740.Parent=v634;Instance.new(v7("\45\87\0\68\185\22\123\49","\203\120\30\67\43"),v740).CornerRadius=UDim.new(0,85 -(32 + 47) );v740.MouseEnter:Connect(function() v30(v740,{[v7("\211\36\78\228\222\227\42\88\225\221\210\42\65\224\203\162","\185\145\69\45\143")]=v27.redHover},0.15);end);v740.MouseLeave:Connect(function() v30(v740,{[v7("\168\30\26\173\219\152\16\12\168\216\169\16\21\169\206\217","\188\234\127\121\198")]=v27.red},0.15);end);v740.MouseButton1Click:Connect(function() if v48 then return;end v398("🗑️ Hapus Listing",string.format("Hapus %s (%s T) dari booth?\nItem akan kembali ke inventory.",v632.ItemName or v7("\49\38\22\142","\227\88\82\115") ,v28(v632.Price)),function() v740.Text="⏳...";task.spawn(function() local v1058=1977 -(1053 + 924) ;local v1059;local v1060;local v1061;while true do if (v1058==0) then v1059=0;v1060=nil;v1058=1 + 0 ;end if (v1058==(1 -0)) then v1061=nil;while true do if (v1059==0) then v1060,v1061=pcall(function() return v16.Remotes.DeleteSaleListing:InvokeServer(v7("\97\16\181\179\10","\19\35\127\218\199\98"),v632.ListingKey);end);if v1060 then v350.Text="✅ "   .. (v632.ItemName or v7("\21\239\15\239","\130\124\155\106"))   .. v7("\149\207\255\167\162\230\105\172\149\207\247\189\170\182\126\176\218\223\254","\223\181\171\150\207\195\150\28") ;v30(v634,{[v7("\110\59\224\165\14\94\53\246\160\13\120\40\226\160\26\92\59\241\171\7\79\35","\105\44\90\131\206")]=1,[v7("\204\233\168\188","\94\159\128\210\217\104")]=UDim2.new(1649 -(685 + 963) , -4,0 -0 ,0)},0.3);task.wait(0.3);v634:Destroy();task.wait(0.05 -0 );v322.CanvasSize=UDim2.new(0,0,0,v332.AbsoluteContentSize.Y + (1719 -(541 + 1168)) );v174();else v740.Text="❌";v350.Text="❌ Gagal hapus: "   .. tostring(v1061) ;task.wait(2);v740.Text="🗑️ Hapus";end break;end end break;end end end);end);end);v634.Position=UDim2.new(1597.3 -(645 + 952) ,838 -(669 + 169) ,0,0 -0 );v634.BackgroundTransparency=0.5 -0 ;v30(v634,{[v7("\96\246\21\182\75\118\246\116","\26\48\153\102\223\63\31\153")]=UDim2.new(0,0 + 0 ,0 + 0 ,0),[v7("\32\65\238\248\5\82\226\230\12\68\217\225\3\78\254\227\3\82\232\253\1\89","\147\98\32\141")]=765 -(181 + 584) },0.3 + (v633 * 0.03) );return v634;end local function v401(v755,v756) local v757=v755.IsListed;local v758=Instance.new(v7("\62\81\226\199\3","\43\120\35\131\170\102\54"));v758.Name=v7("\125\8\145\149\164\162\128\107","\228\52\102\231\214\197\208")   .. v756 ;v758.Size=UDim2.new(1396 -(665 + 730) , -(11 -7),0 -0 ,1422 -(540 + 810) );v758.BackgroundColor3=(v757 and Color3.fromRGB(35,139 -104 ,28)) or v27.cardBg ;v758.BorderSizePixel=0;v758.LayoutOrder=v756;v758.Parent=v322;v758.ClipsDescendants=true;Instance.new(v7("\43\201\86\197\248\133\28\196","\182\126\128\21\170\138\235\121"),v758).CornerRadius=UDim.new(0,21 -13 );if v757 then local v961=0 + 0 ;local v962;while true do if (v961==(205 -(166 + 37))) then v962.Parent=v758;break;end if (v961==(1881 -(22 + 1859))) then v962=Instance.new(v7("\190\243\6\242\148\28\59\3","\102\235\186\85\134\230\115\80"));v962.Thickness=1773 -(843 + 929) ;v961=263 -(30 + 232) ;end if ((2 -1)==v961) then v962.Color=v27.orange;v962.Transparency=777.5 -(55 + 722) ;v961=3 -1 ;end end end v758.MouseEnter:Connect(function() v30(v758,{[v7("\117\13\61\84\117\198\45\66\2\58\124\125\216\45\69\95","\66\55\108\94\63\18\180")]=(v757 and Color3.fromRGB(1717 -(78 + 1597) ,10 + 32 ,30 + 2 )) or v27.cardBgHover },0.15);end);v758.MouseLeave:Connect(function() v30(v758,{[v7("\54\140\134\60\32\75\27\152\139\51\4\86\24\130\151\100","\57\116\237\229\87\71")]=(v757 and Color3.fromRGB(30 + 5 ,35,28)) or v27.cardBg },549.15 -(305 + 244) );end);local v767=Instance.new(v7("\158\180\245\243\91\239\69\175\189","\39\202\209\141\135\23\142"));v767.Size=UDim2.new(0,28,0,26 + 2 );v767.Position=UDim2.new(105 -(95 + 10) ,8,0.5 + 0 , -14);v767.BackgroundColor3=v32[v755.ItemTier] or v27.bgSecondary ;v767.BackgroundTransparency=0.4 -0 ;v767.Text=(v757 and "🏪") or "📦" ;v767.TextSize=14;v767.TextColor3=Color3.new(1 -0 ,763 -(592 + 170) ,3 -2 );v767.Font=Enum.Font.GothamBold;v767.Parent=v758;Instance.new(v7("\202\26\42\5\32\246\250\33","\152\159\83\105\106\82"),v767).CornerRadius=UDim.new(0 -0 ,3 + 3 );local v779=Instance.new(v7("\181\195\73\230\229\93\131\195\93","\60\225\166\49\146\169"));v779.Size=UDim2.new(0 + 0 ,180,0,38 -22 );v779.Position=UDim2.new(0 + 0 ,77 -35 ,507 -(353 + 154) ,7 -1 );v779.BackgroundTransparency=1;v779.Text=v755.ItemName or v7("\26\16\36\36\14\16\33","\103\79\126\79\74\97") ;v779.TextColor3=v32[v755.ItemTier] or v27.text ;v779.TextXAlignment=Enum.TextXAlignment.Left;v779.Font=Enum.Font.GothamBold;v779.TextSize=16 -4 ;v779.TextTruncate=Enum.TextTruncate.AtEnd;v779.Parent=v758;if v757 then local v963=0;local v964;while true do if (v963==(0 + 0)) then v964=Instance.new(v7("\142\122\203\103\114\27\184\122\223","\122\218\31\179\19\62"));v964.Size=UDim2.new(0,42,0,10 + 2 );v964.Position=UDim2.new(0 + 0 ,226,0 -0 ,15 -7 );v964.BackgroundColor3=v27.orange;v963=2 -1 ;end if (v963==2) then v964.Font=Enum.Font.GothamBold;v964.Parent=v758;Instance.new(v7("\194\19\110\214\58\117\188\229","\217\151\90\45\185\72\27"),v964).CornerRadius=UDim.new(86 -(7 + 79) ,2 + 1 );break;end if (v963==(182 -(24 + 157))) then v964.BackgroundTransparency=0.3 -0 ;v964.Text=v7("\159\255\254\245\236\133","\37\211\182\173\161\169\193");v964.TextSize=14 -7 ;v964.TextColor3=Color3.new(1,1,1 + 0 );v963=4 -2 ;end end end local v792=Instance.new(v7("\247\121\255\6\122\194\126\226\30","\54\163\28\135\114"));v792.Size=UDim2.new(380 -(262 + 118) ,1303 -(1038 + 45) ,0 -0 ,242 -(19 + 211) );v792.Position=UDim2.new(113 -(88 + 25) ,106 -64 ,0 + 0 ,22 + 1 );v792.BackgroundTransparency=1037 -(1007 + 29) ;v792.Text=(v31[v755.ItemTier] or "?")   .. " • "   .. (v755.ItemType or "?") ;v792.TextColor3=v27.textDim;v792.TextXAlignment=Enum.TextXAlignment.Left;v792.Font=Enum.Font.Gotham;v792.TextSize=3 + 6 ;v792.Parent=v758;local v804={};if (v755.RAP and (v755.RAP>0)) then table.insert(v804,v7("\26\250\109\216\14","\31\72\187\61\226\46")   .. v29(v755.RAP) );else table.insert(v804,v7("\241\39\115\136\7\51","\68\163\102\35\178\39\30"));end if (v755.ALP and v755.ALP.avg and (v755.ALP.avg>0)) then table.insert(v804,string.format(v7("\159\92\234\157\67\240\144","\113\222\16\186\167\99\213\227"),v29(v755.ALP.avg)));end local v805=Instance.new(v7("\26\11\227\226\2\15\249\243\34","\150\78\110\155"));v805.Size=UDim2.new(0 -0 ,1040 -820 ,0,3 + 9 );v805.Position=UDim2.new(811 -(340 + 471) ,105 -63 ,589 -(276 + 313) ,97 -57 );v805.BackgroundTransparency=1 + 0 ;v805.Text=table.concat(v804," │ ");v805.TextColor3=v27.textMuted;v805.TextXAlignment=Enum.TextXAlignment.Left;v805.Font=Enum.Font.Gotham;v805.TextSize=4 + 5 ;v805.Parent=v758;local v816=1 + 0 ;local v817=tonumber(v267.Text) or v24 ;local v818=v755.RAP or (1972 -(495 + 1477)) ;local v819=(v755.ALP and v755.ALP.avg) or (0 -0) ;if (v818>(0 + 0)) then v816=math.floor((v818 * v817)/(503 -(342 + 61)) );elseif (v819>(0 + 0)) then v816=math.floor((v819 * v817)/100 );end if (v816<(166 -(4 + 161))) then v816=1;end local v820=Instance.new(v7("\177\192\63\245\134\17\167","\32\229\165\71\129\196\126\223"));v820.Size=UDim2.new(0 + 0 ,203 -138 ,0,62 -38 );v820.Position=UDim2.new(1, -(777 -(322 + 175)),0,568 -(173 + 390) );v820.BackgroundColor3=v27.inputBg;v820.Text=tostring(v816);v820.PlaceholderText=v7("\235\136\214\134\128","\181\163\233\164\225\225");v820.PlaceholderColor3=v27.textMuted;v820.TextColor3=v27.gold;v820.Font=Enum.Font.GothamSemibold;v820.TextSize=3 + 8 ;v820.ClearTextOnFocus=true;v820.BorderSizePixel=0;v820.Parent=v758;Instance.new(v7("\101\162\29\120\66\133\59\101","\23\48\235\94"),v820).CornerRadius=UDim.new(314 -(203 + 111) ,4);local v837=Instance.new(v7("\72\223\192\73\123\50\208\121\214","\178\28\186\184\61\55\83"));v837.Size=UDim2.new(0 + 0 ,10 + 4 ,0 -0 ,22 + 2 );v837.Position=UDim2.new(707 -(57 + 649) , -(597 -(328 + 56)),0,2 + 3 );v837.BackgroundTransparency=1;v837.Text="T";v837.TextColor3=v27.textDim;v837.Font=Enum.Font.GothamBold;v837.TextSize=522 -(433 + 79) ;v837.Parent=v758;local v846=0 + 0 ;local v847={};if (v818>(0 + 0)) then local v965=0 -0 ;while true do if ((0 -0)==v965) then table.insert(v847,{[v7("\200\204\69\57\254","\149\164\173\39\92\146\110")]=v7("\193\6\32","\123\147\71\112\127\122"),[v7("\218\204\142","\38\172\173\226\17")]=v818});table.insert(v847,{[v7("\65\16\46\234\65","\143\45\113\76")]=v7("\225\232\89","\92\216\216\124"),[v7("\77\51\160","\157\59\82\204\32")]=math.floor(v818 * 0.9 )});v965=1 + 0 ;end if (v965==(1 + 0)) then table.insert(v847,{[v7("\52\63\225\255\229","\209\88\94\131\154\137\138\179")]=v7("\112\241\129","\66\72\193\164\28\126\67\81"),[v7("\241\45\164","\22\135\76\200\56\70")]=math.floor(v818 * (1036.8 -(562 + 474)) )});break;end end end if (v819>(0 -0)) then table.insert(v847,{[v7("\129\49\250\33\81","\129\237\80\152\68\61")]=v7("\112\132\52","\56\49\200\100\147\124\119"),[v7("\218\63\179","\144\172\94\223")]=math.floor(v819)});end for v919,v920 in ipairs(v847) do if (v919>(7 -3)) then break;end local v921=Instance.new(v7("\16\10\186\83\6\26\182\83\43\1","\39\68\111\194"));v921.Size=UDim2.new(905 -(76 + 829) ,1701 -(1506 + 167) ,0,25 -11 );v921.Position=UDim2.new(267 -(58 + 208) , -280 + v846 ,0 + 0 ,25 + 9 );v921.BackgroundColor3=v27.searchBg;v921.Text=v920.label;v921.Font=Enum.Font.GothamSemibold;v921.TextSize=7;v921.TextColor3=v27.textDim;v921.AutoButtonColor=false;v921.BorderSizePixel=0;v921.Parent=v758;Instance.new(v7("\227\143\196\200\107\185\211\180","\215\182\198\135\167\25"),v921).CornerRadius=UDim.new(0 + 0 ,16 -12 );local v937=v920.val;v921.MouseEnter:Connect(function() v30(v921,{[v7("\175\72\233\67\138\91\229\93\131\77\201\71\129\70\248\27","\40\237\41\138")]=v27.accent,[v7("\243\113\226\236\105\200\120\245\234\25","\42\167\20\154\152")]=Color3.new(338 -(258 + 79) ,1 + 0 ,1 -0 )},1470.1 -(1219 + 251) );end);v921.MouseLeave:Connect(function() v30(v921,{[v7("\104\255\161\73\118\51\69\235\172\70\82\46\70\241\176\17","\65\42\158\194\34\17")]=v27.searchBg,[v7("\46\34\74\24\14\226\23\225\8\116","\142\122\71\50\108\77\141\123")]=v27.textDim},1671.1 -(1231 + 440) );end);v921.MouseButton1Click:Connect(function() v820.Text=tostring(math.max(59 -(34 + 24) ,v937));end);v846=v846 + 18 + 13 ;end local v848=Instance.new(v7("\33\167\231\12\25\0\182\235\23\53","\91\117\194\159\120"));v848.Size=UDim2.new(0,75,0 -0 ,14 + 16 );v848.Position=UDim2.new(1, -(379 -254),0.5, -15);v848.BackgroundColor3=(v757 and v27.textMuted) or v27.green ;v848.Text=(v757 and "✅ Listed") or "💰 List" ;v848.Font=Enum.Font.GothamBold;v848.TextSize=11;v848.TextColor3=Color3.new(1,3 -2 ,2 -1 );v848.AutoButtonColor=false;v848.BorderSizePixel=0 -0 ;v848.Parent=v758;Instance.new(v7("\47\52\29\23\39\255\33\8","\68\122\125\94\120\85\145"),v848).CornerRadius=UDim.new(0 -0 ,1595 -(877 + 712) );if  not v757 then local v967=0 + 0 ;while true do if (v967==(754 -(242 + 512))) then v848.MouseEnter:Connect(function() v30(v848,{[v7("\53\29\204\85\207\203\181\2\18\203\125\199\213\181\5\79","\218\119\124\175\62\168\185")]=v27.greenHover},0.15);end);v848.MouseLeave:Connect(function() v30(v848,{[v7("\135\241\75\207\162\226\71\209\171\244\107\203\169\255\90\151","\164\197\144\40")]=v27.green},0.15);end);break;end end end v848.MouseButton1Click:Connect(function() if v48 then return;end if v757 then local v1062=0 -0 ;while true do if (v1062==(627 -(92 + 535))) then v350.Text="ℹ️ Item sudah di-list! Gunakan tab Booth untuk manage.";return;end end end local v938=tonumber(v820.Text);if ( not v938 or (v938<=0)) then v350.Text="❌ Harga tidak valid!";return;end v398("💰 List Item",string.format(v7("\175\249\185\159\157\243\144\176\161\142\157\180\140\255\190\131\157\165\134\248\171\153\218\183\195\181\185\203\233\233","\214\227\144\202\235\189"),v755.ItemName or v7("\228\177\130\118","\92\141\197\231\27\112\211\51") ,v28(v938)),function() local v968=0 + 0 ;while true do if (v968==(0 -0)) then v848.Text="⏳...";v848.BackgroundColor3=Color3.fromRGB(12 + 168 ,545 -395 ,0 + 0 );v968=1 + 0 ;end if (v968==1) then v350.Text="💰 Listing "   .. (v755.ItemName or v7("\239\235\143\174","\177\134\159\234\195"))   .. v7("\243\165\113","\169\221\139\95\192") ;task.spawn(function() local v1191=0 + 0 ;local v1192;local v1193;while true do if (v1191==(0 -0)) then v1192,v1193=pcall(function() return v16.Remotes.CreateSaleListing:InvokeServer(v7("\252\132\112\43\42","\70\190\235\31\95\66"),v755.ItemType,v755.UUID,v938);end);if v1192 then v848.Text="✅ Listed";v848.BackgroundColor3=v27.textMuted;v350.Text="✅ "   .. (v755.ItemName or v7("\179\246\31\235","\133\218\130\122\134"))   .. v7("\124\251\234\137\208\170\43\40\191\240\193\212\162\42\59\254\163","\88\92\159\131\164\188\195")   .. v28(v938)   .. v7("\192\26","\189\224\78\223\43\183\139") ;v755.IsListed=true;v757=true;v758.BackgroundColor3=Color3.fromRGB(35,35,28);v767.Text="🏪";v174();else local v1325=0;local v1326;while true do if (v1325==0) then v1326=0;while true do if (v1326==(0 -0)) then v848.Text="❌ Gagal";v848.BackgroundColor3=v27.red;v1326=1;end if (v1326==(1786 -(1476 + 309))) then v350.Text="❌ Gagal list: "   .. tostring(v1193) ;task.wait(2);v1326=2;end if (v1326==(1286 -(299 + 985))) then v848.Text="💰 List";v848.BackgroundColor3=v27.green;break;end end break;end end end break;end end end);break;end end end);end);v758:SetAttribute(v7("\7\232\143\27\244\27\213\174","\161\78\156\234\118"),v755.UUID or "" );v758:SetAttribute(v7("\142\164\229\213\180\163\204\216","\188\199\215\169"),v757);v758.Position=UDim2.new(0.3 + 0 ,0 -0 ,93 -(86 + 7) ,0 -0 );v758.BackgroundTransparency=0.5 + 0 ;v30(v758,{[v7("\204\6\76\114\252\245\6\81","\136\156\105\63\27")]=UDim2.new(0,880 -(672 + 208) ,0 + 0 ,132 -(14 + 118) ),[v7("\57\141\122\63\28\158\118\33\21\136\77\38\26\130\106\36\26\158\124\58\24\149","\84\123\236\25")]=0},0.3 + (v756 * (445.02 -(339 + 106))) );return v758;end local function v402(v862) local v863=0;while true do if (v863==0) then if (v862==v7("\242\132\165\3\164","\213\144\235\202\119\204")) then local v1121=0 + 0 ;while true do if (3==v1121) then v290.Visible=false;v322.Position=UDim2.new(0 + 0 ,1405 -(440 + 955) ,0,v320);v322.Size=UDim2.new(1, -20,1 + 0 , -(287 -127));break;end if (v1121==(0 + 0)) then v186.BackgroundColor3=v27.tabActive;v186.TextColor3=Color3.new(2 -1 ,1 + 0 ,354 -(260 + 93) );v187.BackgroundColor3=v27.tabInactive;v1121=1;end if (v1121==(1 + 0)) then v187.TextColor3=v27.textDim;v188.Visible=true;v203.Visible=false;v1121=2;end if (v1121==(4 -2)) then v255.Visible=false;v267.Visible=false;v280.Visible=false;v1121=3;end end else v187.BackgroundColor3=v27.tabActive;v187.TextColor3=Color3.new(1,1,1 -0 );v186.BackgroundColor3=v27.tabInactive;v186.TextColor3=v27.textDim;v188.Visible=false;v203.Visible=true;v255.Visible=true;v267.Visible=true;v280.Visible=true;v290.Visible=true;v322.Position=UDim2.new(1974 -(1181 + 793) ,3 + 7 ,307 -(105 + 202) ,v321);v322.Size=UDim2.new(1 + 0 , -(830 -(352 + 458)),1,( -160 -v289) -4 );end v44=v862;break;end end end function v52() if v47 then return;end if  not v19 then v350.Text="⚠️ Modules tidak tersedia";return;end v47=true;v397();v395(true,"⏳ Memuat booth listings...");v350.Text="🔄 Memuat booth...";task.spawn(function() local v939,v940=pcall(function() local v970=v42();if ( not v970 or  not next(v970)) then local v1085=0 -0 ;while true do if (v1085==(4 -2)) then v189.Text=v7("\19\46\226\177\163\200\190\166","\137\64\66\141\197\153\232\142")   .. v25 ;v189.TextColor3=v27.green;v1085=3 + 0 ;end if (v1085==1) then v350.Text="✅ Booth kosong";v361.Text=v7("\115\88\210\35\59\55\68\45\31\205","\45\67\120\190\74\72\67");v1085=2;end if (v1085==0) then v395(false);v396("📭 Booth kamu kosong! Buka tab Inventory untuk list item.");v1085=2 -1 ;end if (v1085==3) then v47=false;return;end end end local v971={};local v972={};for v1064,v1065 in pairs(v970) do if  not v1065.Item then continue;end local v1066=tostring(v1065.ItemType or "" )   .. "_"   .. tostring(v1065.Item.Id or "" ) ;local v1067=v972[v1066];if (v1067==nil) then local v1137=949 -(438 + 511) ;local v1138;local v1139;while true do if (v1137==0) then local v1267=1383 -(1262 + 121) ;while true do if (v1267==(1069 -(728 + 340))) then v1137=1;break;end if (v1267==0) then v1138,v1139=pcall(function() return v18.GetItemDataFromItemType(v1065.ItemType,v1065.Item.Id);end);v1067=(v1138 and v1139) or false ;v1267=1791 -(816 + 974) ;end end end if ((2 -1)==v1137) then v972[v1066]=v1067;break;end end end if (v1067==false) then v1067=nil;end local v1068=(v1067 and v1067.Data and v1067.Data.Name) or tostring(v1065.Item.Id) ;local v1069=(v1067 and v1067.Data and v1067.Data.Tier) or (0 -0) ;local v1070=(v1067 and v1067.Data and tostring(v1067.Data.Id)) or tostring(v1065.Item.Id) ;table.insert(v971,{[v7("\47\217\49\178\129\13\215\9\163\145","\232\99\176\66\198")]=v1064,[v7("\197\53\45\11\85\140\244\41","\76\140\65\72\102\27\237\153")]=v1068,[v7("\99\206\19\223\227\24\174\79","\222\42\186\118\178\183\97")]=v1065.ItemType,[v7("\116\248\65\135\105\229\65\152","\234\61\140\36")]=v1069,[v7("\8\201\191\127\38\37\238\174\96","\111\65\189\218\18")]=v1070,[v7("\115\89\18\54\14","\207\35\43\123\85\107\60")]=v1065.Price or (339 -(163 + 176)) ,[v7("\69\159\137\206","\25\16\202\192\138")]=v1065.Item.UUID,[v7("\207\234\157","\148\157\171\205\130\201")]=nil,[v7("\2\248\68","\150\67\180\20\73\177")]=nil});end local v973= #v971;v189.Text=v7("\190\20\21\89\215\88","\45\237\120\122")   .. v973   .. "/"   .. v25 ;v189.TextColor3=((v973>=v25) and v27.red) or ((v973>=(v25-(5 -3))) and v27.orange) or v27.green ;v350.Text=string.format("📊 %d listings. Fetching RAP/ALP...", #v971);local v977,v978=0 -0 , #v971;for v1071,v1072 in ipairs(v971) do local v1073=0;local v1074;while true do if (v1073==(0 + 0)) then v1074=v1071;task.spawn(function() local v1230=0;while true do if (v1230==(1811 -(1564 + 246))) then v977=v977 + (346 -(124 + 221)) ;break;end if (v1230==0) then v971[v1074].RAP=v38(v1072.ItemType,v1072.ItemIdStr) or (0 + 0) ;v971[v1074].ALP=v39(v1072.ItemType,v1072.ItemIdStr);v1230=452 -(115 + 336) ;end end end);break;end end end local v979=tick();while (v977<v978) and ((tick() -v979)<(17 -9))  do task.wait(0.05 + 0 );end v399(v971);v49=v971;v395(false);v397();if ( #v971==0) then v396("📭 Booth kosong!");else for v1140,v1141 in ipairs(v971) do v400(v1141,v1140);end end task.wait(0.05);v322.CanvasSize=UDim2.new(46 -(45 + 1) ,0,0 + 0 ,v332.AbsoluteContentSize.Y + (2000 -(1282 + 708)) );local v981=1212 -(583 + 629) ;for v1075,v1076 in ipairs(v971) do v981=v981 + (v1076.Price or 0) ;end v350.Text=string.format("✅ %d listings loaded", #v971);v361.Text=string.format("%d items • Total: %sT", #v971,v29(v981));end);if  not v939 then v395(false);v396("⚠️ Error: "   .. tostring(v940) );v350.Text="❌ Error: "   .. tostring(v940):sub(1 + 0 ,50) ;end v47=false;end);end function v53() local v865=0;while true do if (v865==(0 -0)) then if v47 then return;end if  not v19 then v350.Text="⚠️ Modules tidak tersedia";return;end v865=1;end if ((2 + 1)==v865) then task.spawn(function() local v1086,v1087=pcall(function() local v1143=v41();if  not v1143 then local v1231=1170 -(943 + 227) ;while true do local v1269=0;while true do if (v1269==0) then if (v1231==(1 + 0)) then v47=false;return;end if (v1231==(1631 -(1539 + 92))) then v395(false);v396("⚠️ Gagal memuat Data Replion");v1231=1;end break;end end end end local v1144,v1145=pcall(function() return v1143:GetExpect(v7("\254\230\180\41\217\252\173\62\206","\76\183\136\194"));end);if ( not v1144 or  not v1145) then v1145=v1143:Get(v7("\83\232\243\61\94\91\27\104\255","\116\26\134\133\88\48\47"));end if  not v1145 then local v1232=1946 -(706 + 1240) ;while true do if (v1232==(259 -(81 + 177))) then local v1304=0 -0 ;while true do if (v1304==(257 -(212 + 45))) then v47=false;return;end end end if (v1232==(0 -0)) then v395(false);v396("⚠️ Gagal membaca inventory");v1232=1947 -(708 + 1238) ;end end end local v1146=v42();local v1147={};for v1194,v1195 in pairs(v1146) do if (v1195.Item and v1195.Item.UUID) then v1147[v1195.Item.UUID]=true;end end local v1148={};local v1149=v224.Text:lower();local v1150={};local v1151={};for v1196,v1197 in pairs(v1145) do if (type(v1197)==v7("\10\192\162\232\184","\18\126\161\192\132\221")) then for v1291,v1292 in pairs(v1197) do if ((type(v1292)==v7("\75\41\172\8\83","\54\63\72\206\100")) and v1292.UUID) then local v1327=0 + 0 ;local v1328;local v1329;local v1330;local v1331;local v1332;local v1333;local v1334;local v1335;while true do if (v1327==2) then local v1352=0;while true do if ((1 + 0)==v1352) then v1327=1670 -(586 + 1081) ;break;end if (v1352==(511 -(348 + 163))) then v1335=(v1328 and v1328.Data and tostring(v1328.Data.Id)) or tostring(v1292.Id) ;v1151[v1330]=(v1151[v1330] or 0) + 1 ;v1352=1 + 0 ;end end end if ((281 -(215 + 65))==v1327) then if (v1332 and v1333 and v1333.Data) then local v1359=0 -0 ;local v1360;while true do if (v1359==0) then v1360=1859 -(1541 + 318) ;while true do if (v1360==(1 + 0)) then v1331=v1333.Data.Tier or (0 + 0) ;v1328=v1333;break;end if (v1360==0) then v1329=v1333.Data.Name;v1330=v1333.Data.Type or v1196 ;v1360=1 + 0 ;end end break;end end else local v1361=0;local v1362;local v1363;while true do if (v1361==0) then v1362,v1363=pcall(function() return v18.GetItemDataFromItemType(v1292.Id);end);if (v1362 and v1363 and v1363.Data) then local v1376=0;while true do if (v1376==(1751 -(1036 + 714))) then v1331=v1363.Data.Tier or 0 ;v1328=v1363;break;end if (v1376==(0 + 0)) then v1329=v1363.Data.Name;v1330=v1363.Data.Type or v1196 ;v1376=1;end end end break;end end end v1334=v1147[v1292.UUID] or false ;v1327=2 + 0 ;end if (v1327==3) then table.insert(v1150,{[v7("\253\108\108\94","\27\168\57\37\26\133")]=v1292.UUID,[v7("\4\190\121\165\254\41","\183\77\202\28\200")]=v1292.Id,[v7("\62\39\140\5\62\55\186\28\5","\104\119\83\233")]=v1335,[v7("\220\236\34\47\109\244\245\34","\35\149\152\71\66")]=v1329,[v7("\48\252\71\189\14\0\248\71","\90\121\136\34\208")]=v1330,[v7("\238\26\80\19\243\7\80\12","\126\167\110\53")]=v1331,[v7("\20\3\2\241\207\43\56\20","\95\93\112\78\152\188")]=v1334,[v7("\243\212\181","\178\161\149\229\117\132\222")]=nil,[v7("\169\247\237","\67\232\187\189\204\193\118\198")]=nil});break;end if (v1327==(1280 -(883 + 397))) then v1328,v1329,v1330,v1331=nil,tostring(v1292.Id or "?" ),v1196,0;v1332,v1333=pcall(function() return v18.GetItemDataFromItemType(v1196,v1292.Id);end);v1327=591 -(563 + 27) ;end end end end end end v54(v1151);for v1198,v1199 in ipairs(v1150) do local v1200=0 -0 ;local v1201;while true do if (v1200==(1986 -(1369 + 617))) then v1201=0;while true do if (v1201==(1487 -(85 + 1402))) then if (v45 and (v1199.ItemType~=v45)) then continue;end if (v1149~="") then local v1353=0 + 0 ;local v1354;local v1355;local v1356;while true do if (v1353==(2 -1)) then v1356=(v31[v1199.ItemTier] or ""):lower():find(v1149,404 -(274 + 129) ,true);if  not (v1354 or v1355 or v1356) then continue;end break;end if (v1353==(217 -(12 + 205))) then v1354=v1199.ItemName:lower():find(v1149,1,true);v1355=v1199.ItemType:lower():find(v1149,1 + 0 ,true);v1353=3 -2 ;end end end v1201=1 + 0 ;end if (v1201==(385 -(27 + 357))) then table.insert(v1148,v1199);break;end end break;end end end v350.Text=string.format("📊 %d items. Fetching RAP/ALP...", #v1148);local v1153=math.min( #v1148,530 -(91 + 389) );local v1154=0;for v1202=298 -(90 + 207) ,v1153 do local v1203=0 + 0 ;local v1204;local v1205;while true do if (v1203==(861 -(706 + 155))) then v1204=v1148[v1202];v1205=v1202;v1203=1796 -(730 + 1065) ;end if (1==v1203) then task.spawn(function() v1148[v1205].RAP=v38(v1204.ItemType,v1204.ItemIdStr) or 0 ;v1148[v1205].ALP=v39(v1204.ItemType,v1204.ItemIdStr);v1154=v1154 + 1 ;end);break;end end end local v1155=tick();while (v1154<v1153) and ((tick() -v1155)<(1571 -(1339 + 224)))  do task.wait(0.05);end local v1156,v1157={},{};for v1206,v1207 in ipairs(v1148) do if v1207.IsListed then table.insert(v1156,v1207);else table.insert(v1157,v1207);end end v399(v1156);v399(v1157);v1148={};for v1208,v1209 in ipairs(v1156) do table.insert(v1148,v1209);end for v1210,v1211 in ipairs(v1157) do table.insert(v1148,v1211);end v50=v1148;v395(false);v397();if ( #v1148==(0 + 0)) then v396("📭 Tidak ada item"   .. (((v1149~="") and (" untuk '"   .. v1149   .. "'")) or "")   .. ((v45 and (v7("\203\42\188\96","\143\235\78\213\64\91\98")   .. v45)) or "")   .. "." );else for v1271,v1272 in ipairs(v1148) do v401(v1272,v1271);end end task.wait(0.05 + 0 );v322.CanvasSize=UDim2.new(0,0,0,v332.AbsoluteContentSize.Y + (14 -4) );local v1159=843 -(268 + 575) ;for v1212,v1213 in ipairs(v1148) do if v1213.IsListed then v1159=v1159 + 1 ;end end v350.Text=string.format("✅ %d items loaded", #v1148);v361.Text=string.format("%d items • %d listed", #v1148,v1159);end);if  not v1086 then v395(false);v396("⚠️ Error: "   .. tostring(v1087) );v350.Text="❌ Error: "   .. tostring(v1087):sub(1295 -(919 + 375) ,137 -87 ) ;end v47=false;end);break;end if (v865==2) then v395(true,"⏳ Memuat inventory...");v350.Text="🔄 Memuat inventory...";v865=3;end if (1==v865) then v47=true;v397();v865=2;end end end v203.MouseButton1Click:Connect(function() if (v47 or v48) then return;end local v866=0;for v941,v942 in ipairs(v50) do if  not v942.IsListed then v866=v866 + (972 -(180 + 791)) ;end end if (v866==(1805 -(323 + 1482))) then local v983=1918 -(1177 + 741) ;local v984;while true do if (v983==0) then v984=0 + 0 ;while true do if (v984==(0 -0)) then local v1273=0;while true do if (v1273==0) then v350.Text="ℹ️ Tidak ada item unlisted untuk di-list.";return;end end end end break;end end end local v867=tonumber(v267.Text) or v24 ;v398("📦 Batch List",string.format("List %d item yang belum di-list\ndengan harga %d%% RAP/ALP?\n\nDelay: %ds per item.",v866,v867,v23),function() local v943=0;while true do if (v943==(0 + 0)) then v47=true;v203.Text="⏳...";v943=1 -0 ;end if (v943==(1 + 0)) then v350.Text="📦 Batch listing...";task.spawn(function() local v1161,v1162=109 -(96 + 13) ,1921 -(962 + 959) ;for v1215,v1216 in ipairs(v50) do if v1216.IsListed then continue;end local v1217=1;local v1218=v1216.RAP or 0 ;local v1219=(v1216.ALP and v1216.ALP.avg) or (0 -0) ;if (v1218>(0 + 0)) then v1217=math.floor((v1218 * v867)/100 );elseif (v1219>(1351 -(461 + 890))) then v1217=math.floor((v1219 * v867)/(74 + 26) );end if (v1217<(3 -2)) then v1217=244 -(19 + 224) ;end v350.Text=string.format("📦 Listing %d/%d: %s (%sT)...",v1161 + v1162 + 1 + 0 ,v866,v1216.ItemName or "?" ,v29(v1217));local v1221=pcall(function() return v16.Remotes.CreateSaleListing:InvokeServer(v7("\175\71\139\253\120","\214\237\40\228\137\16"),v1216.ItemType,v1216.UUID,v1217);end);if v1221 then v1161=v1161 + (199 -(37 + 161)) ;v1216.IsListed=true;else v1162=v1162 + 1 + 0 ;end task.wait(v23);end v350.Text=string.format("✅ Batch done: %d listed, %d gagal",v1161,v1162);v203.Text="📦 List Semua";v47=false;v174();task.wait(1);v53();end);break;end end end);end);v188.MouseButton1Click:Connect(function() if (v47 or v48) then return;end v398("🗑️ Clear All Booth","Hapus SEMUA listing dari booth kamu?\nSemua item akan kembali ke inventory.",function() local v944=0;while true do if ((1 + 0)==v944) then v350.Text="🗑️ Menghapus semua listing...";task.spawn(function() local v1165=0 + 0 ;local v1166;local v1167;while true do if (v1165==1) then for v1294 in pairs(v1166) do table.insert(v1167,v1294);end for v1295,v1296 in ipairs(v1167) do v350.Text=string.format("🗑️ Menghapus %d/%d...",v1295, #v1167);local v1298,v1299=pcall(function() return v16.Remotes.DeleteSaleListing:InvokeServer(v7("\167\236\224\205\11","\198\229\131\143\185\99"),v1296);end);if  not v1298 then warn(v7("\106\191\173\127\93\137\186\70\120\177\232\87\84\128\173\103\84\204\173\97\67\131\186\41","\19\49\236\200"),v1299);end if (v1295< #v1167) then task.wait(v23);end end v350.Text=string.format("✅ %d listing dihapus!", #v1167);v1165=2;end if (v1165==(61 -(60 + 1))) then local v1276=923 -(826 + 97) ;while true do if (v1276==(1 + 0)) then v1167={};v1165=3 -2 ;break;end if (v1276==(0 -0)) then v1166=v42();if ( not v1166 or  not next(v1166)) then local v1348=685 -(375 + 310) ;while true do if (v1348==(2000 -(1864 + 135))) then v47=false;return;end if (0==v1348) then v350.Text="ℹ️ Booth sudah kosong";v188.Text="🗑️ Clear";v1348=1;end end end v1276=2 -1 ;end end end if (v1165==(1 + 2)) then task.wait(1 + 0 );v52();break;end if (v1165==(4 -2)) then v188.Text="🗑️ Clear";v47=false;v174();v1165=1134 -(314 + 817) ;end end end);break;end if (v944==(0 + 0)) then v47=true;v188.Text="⏳...";v944=1;end end end);end);v186.MouseButton1Click:Connect(function() local v868=214 -(32 + 182) ;while true do if (v868==1) then v52();break;end if (v868==(0 + 0)) then if (v44==v7("\252\56\249\163\236","\218\158\87\150\215\132")) then return;end v402(v7("\249\17\214\246\62","\173\155\126\185\130\86\66"));v868=3 -2 ;end end end);v187.MouseButton1Click:Connect(function() if (v44==v7("\236\168\172\194\134\248\234\180\163","\140\133\198\218\167\232")) then return;end v402(v7("\188\32\162\120\138\161\33\166\100","\228\213\78\212\29"));v53();end);v178.MouseButton1Click:Connect(function() local v869=0;local v870;while true do if (v869==(65 -(39 + 26))) then v870=144 -(54 + 90) ;while true do if ((199 -(45 + 153))==v870) then v51=nil;v174();v870=2 + 0 ;end if (v870==(552 -(457 + 95))) then v36={};v37={};v870=1;end if (v870==(2 + 0)) then if (v44==v7("\133\67\185\17\227","\139\231\44\214\101")) then v52();else v53();end break;end end break;end end end);local v403=nil;v224:GetPropertyChangedSignal(v7("\237\234\30\74","\118\185\143\102\62\112\209\81")):Connect(function() if (v44~=v7("\85\126\63\227\171\1\19\42\69","\88\60\16\73\134\197\117\124")) then return;end if v403 then task.cancel(v403);end v403=task.delay(0.4 -0 ,function() local v945=0 -0 ;local v946;while true do if (v945==0) then v946=0 -0 ;while true do if (v946==(0 + 0)) then v53();v403=nil;break;end end break;end end end);end);v11.InputBegan:Connect(function(v871,v872) local v873=0 -0 ;while true do if (v873==(0 -0)) then if v872 then return;end if v48 then return;end v873=749 -(485 + 263) ;end if (v873==(708 -(575 + 132))) then if (v871.KeyCode==Enum.KeyCode.Escape) then if ( not v391 and v85.Visible) then v393();end elseif (v871.KeyCode==Enum.KeyCode.R) then local v1233=v11:GetFocusedTextBox();if  not v1233 then v36={};v37={};v51=nil;v174();if (v44==v7("\82\229\247\220\73","\33\48\138\152\168")) then v52();else v53();end end end break;end end end);v85.Size=UDim2.new(0,861 -(750 + 111) ,0,1010 -(445 + 565) );v85.BackgroundTransparency=1 + 0 ;v30(v85,{[v7("\65\31\42\84","\87\18\118\80\49\161")]=UDim2.new(0 + 0 ,1130 -490 ,0 + 0 ,890 -(189 + 121) ),[v7("\110\31\217\171\183\94\17\207\174\180\120\12\219\174\163\92\31\200\165\190\79\7","\208\44\126\186\192")]=0},0.4 + 0 ,Enum.EasingStyle.Back,Enum.EasingDirection.Out);task.wait(0.5);v402(v7("\245\21\171\210\28","\46\151\122\196\166\116\156\169"));v52();v174();print("[SellerUI] Plaza Booth Seller Manager v2.0 loaded! 💰");print(v7("\222\222\67\22\247\224\255\115\51\198\165\222\78\21\233\241\238\83\14\232\191\173\99\9\248\184\192\79\20\242\232\228\92\31\183\165\223\27\40\254\227\255\67\9\243","\155\133\141\38\122"));
+local LocalPlayer = Players.LocalPlayer
+
+-- Safe require
+local TradeData, Replion, ItemUtility
+local requireOK = true
+do
+    local ok1, td = pcall(function() return require(ReplicatedStorage.Shared.Trading.TradeData) end)
+    local ok2, rp = pcall(function() return require(ReplicatedStorage.Packages.Replion) end)
+    local ok3, iu = pcall(function() return require(ReplicatedStorage.Shared.ItemUtility) end)
+    if ok1 then TradeData = td end
+    if ok2 then Replion = rp end
+    if ok3 then ItemUtility = iu end
+    if not (ok1 and ok2 and ok3) then
+        requireOK = false
+        warn("[SellerUI] Beberapa module gagal di-require. Pastikan script dijalankan di Plaza.")
+    end
+end
+
+-- ==========================
+-- CONFIG
+-- ==========================
+local SUPABASE_URL = "http://152.42.234.192"
+local SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicGxhemFfYXBpIiwiZXhwIjo5OTk5OTk5OTk5fQ.8SwQsK5VSm5HGopGN48ZufPK5Jbx-FrzjIlSUA4QwV8"
+local ALP_CACHE_TTL        = 600
+local LISTING_COOLDOWN     = 3
+local DEFAULT_PRICE_PCT    = 90
+local MAX_BOOTH_SLOTS      = 16
+
+-- ==========================
+-- EXECUTOR HTTP DETECTION
+-- ==========================
+local executor_request = (syn and syn.request)
+    or (http and http.request)
+    or http_request
+    or (fluxus and fluxus.request)
+    or request
+
+-- ==========================
+-- COLORS & THEME
+-- ==========================
+local COLORS = {
+    bg           = Color3.fromRGB(18, 18, 24),
+    bgSecondary  = Color3.fromRGB(26, 26, 34),
+    topBar       = Color3.fromRGB(12, 12, 18),
+    accent       = Color3.fromRGB(130, 88, 255),
+    accentHover  = Color3.fromRGB(150, 110, 255),
+    gold         = Color3.fromRGB(255, 215, 80),
+    green        = Color3.fromRGB(40, 200, 100),
+    greenHover   = Color3.fromRGB(60, 220, 120),
+    red          = Color3.fromRGB(220, 60, 60),
+    redHover     = Color3.fromRGB(240, 80, 80),
+    orange       = Color3.fromRGB(255, 140, 40),
+    cyan         = Color3.fromRGB(80, 200, 240),
+    text         = Color3.fromRGB(230, 230, 240),
+    textDim      = Color3.fromRGB(140, 140, 160),
+    textMuted    = Color3.fromRGB(90, 90, 110),
+    cardBg       = Color3.fromRGB(32, 32, 42),
+    cardBgHover  = Color3.fromRGB(40, 40, 52),
+    listedBg     = Color3.fromRGB(25, 40, 55),
+    listedBorder = Color3.fromRGB(80, 160, 255),
+    bubbleBg     = Color3.fromRGB(130, 88, 255),
+    searchBg     = Color3.fromRGB(35, 35, 48),
+    divider      = Color3.fromRGB(50, 50, 65),
+    inputBg      = Color3.fromRGB(28, 28, 40),
+    tabActive    = Color3.fromRGB(130, 88, 255),
+    tabInactive  = Color3.fromRGB(40, 40, 55),
+}
+
+-- ==========================
+-- HELPERS
+-- ==========================
+local function FormatNumber(n)
+    if type(n) ~= "number" then return tostring(n or "?") end
+    local neg = n < 0
+    local formatted = tostring(math.floor(math.abs(n)))
+    formatted = formatted:reverse():gsub("(%d%d%d)", "%1,"):reverse()
+    if formatted:sub(1, 1) == "," then formatted = formatted:sub(2) end
+    return neg and ("-" .. formatted) or formatted
+end
+
+local function FormatCompact(n)
+    if type(n) ~= "number" then return "?" end
+    if n >= 1000000 then return string.format("%.1fM", n / 1000000) end
+    if n >= 1000 then return string.format("%.1fK", n / 1000) end
+    return tostring(math.floor(n))
+end
+
+local function Tween(obj, props, duration, style, dir)
+    local info = TweenInfo.new(duration or 0.25, style or Enum.EasingStyle.Quad, dir or Enum.EasingDirection.Out)
+    local tw = TweenService:Create(obj, info, props)
+    tw:Play()
+    return tw
+end
+
+local tierNames = {[1]="Common",[2]="Uncommon",[3]="Rare",[4]="Epic",[5]="Legendary",[6]="Mythic",[7]="Secret"}
+local tierColors = {
+    [1] = Color3.fromRGB(160, 160, 170),
+    [2] = Color3.fromRGB(80, 200, 80),
+    [3] = Color3.fromRGB(80, 140, 255),
+    [4] = Color3.fromRGB(180, 80, 255),
+    [5] = Color3.fromRGB(255, 200, 50),
+    [6] = Color3.fromRGB(255, 80, 80),
+    [7] = Color3.fromRGB(255, 60, 200),
+}
+
+-- ==========================
+-- CLEANUP OLD GUI
+-- ==========================
+local guiName = "PlazaSellerManagerGUI"
+if CoreGui:FindFirstChild(guiName) then
+    CoreGui[guiName]:Destroy()
+end
+
+local successCoreGui = pcall(function() local _ = CoreGui.Name end)
+local TargetGuiParent = successCoreGui and CoreGui or LocalPlayer:WaitForChild("PlayerGui")
+
+-- ==========================
+-- RAP & ALP CACHE
+-- ==========================
+local rapCache = {}
+local alpCache = {}
+
+local function FetchRAPFromServer(itemType, itemId)
+    local cacheKey = itemType .. "/" .. tostring(itemId)
+    if rapCache[cacheKey] ~= nil then
+        local cached = rapCache[cacheKey]
+        return cached ~= false and cached or nil
+    end
+    if not TradeData or not TradeData.Remotes or not TradeData.Remotes.GetItemRAP then
+        rapCache[cacheKey] = false
+        return nil
+    end
+    local ok, rapValue, _ = pcall(function()
+        return TradeData.Remotes.GetItemRAP:InvokeServer(itemType, itemId)
+    end)
+    if not ok then rapCache[cacheKey] = false; return nil end
+    rapValue = tonumber(rapValue)
+    if not rapValue or rapValue == -1 then rapCache[cacheKey] = false; return nil end
+    rapCache[cacheKey] = rapValue
+    return rapValue
+end
+
+local function GetAvgPrice(itemType, itemId)
+    if not executor_request then return nil end
+    if SUPABASE_URL == "" or SUPABASE_KEY == "" then return nil end
+    local cacheKey = itemType .. "/" .. tostring(itemId)
+    local cached = alpCache[cacheKey]
+    if cached and (tick() - cached._time) < ALP_CACHE_TTL then return cached end
+    local ok, result = pcall(function()
+        return executor_request({
+            Url = SUPABASE_URL .. "/rpc/get_avg_price",
+            Method = "POST",
+            Headers = {
+                ["apikey"] = SUPABASE_KEY,
+                ["Authorization"] = "Bearer " .. SUPABASE_KEY,
+                ["Content-Type"] = "application/json",
+            },
+            Body = HttpService:JSONEncode({ p_item_type = itemType, p_item_id = tostring(itemId) })
+        })
+    end)
+    if ok and result and result.StatusCode == 200 then
+        local decOk, data = pcall(function() return HttpService:JSONDecode(result.Body) end)
+        if decOk and data and data[1] then
+            local entry = {
+                avg = tonumber(data[1].avg_price) or 0,
+                median = tonumber(data[1].median_price) or 0,
+                count = tonumber(data[1].total_listings) or 0,
+                min = tonumber(data[1].min_price) or 0,
+                max = tonumber(data[1].max_price) or 0,
+                _time = tick()
+            }
+            alpCache[cacheKey] = entry
+            return entry
+        end
+    end
+    return nil
+end
+
+-- ==========================
+-- Replion Data Access
+-- ==========================
+local DataReplion = nil
+local function GetData()
+    if DataReplion then return DataReplion end
+    local ok, d = pcall(function() return Replion.Client:WaitReplion("Data") end)
+    if ok and d then DataReplion = d; return d end
+    return nil
+end
+
+local function GetMyBoothListings()
+    local saleListings = nil
+    local ok = pcall(function() saleListings = Replion.Client:WaitReplion("SaleListings") end)
+    if not ok or not saleListings then
+        warn("[SellerUI] SaleListings Replion tidak tersedia")
+        return {}
+    end
+    local allData = saleListings:Get({"Players"})
+    if not allData then return {} end
+    local myUserId = tostring(LocalPlayer.UserId)
+    local myData = allData[myUserId]
+    if not myData then return {} end
+    return myData.Booth or {}
+end
+
+local function GetTokenBalance()
+    local data = GetData()
+    if not data then return 0 end
+    local ok, tokens = pcall(function() return data:Get("Tokens") end)
+    if ok and tokens then return tonumber(tokens) or 0 end
+    -- Fallback paths
+    local ok2, tokens2 = pcall(function() return data:Get("Currency.Tokens") end)
+    if ok2 and tokens2 then return tonumber(tokens2) or 0 end
+    local ok3, tokens3 = pcall(function() return data:Get("Stats.Tokens") end)
+    if ok3 and tokens3 then return tonumber(tokens3) or 0 end
+    return 0
+end
+
+-- ==========================
+-- STATE
+-- ==========================
+local currentTab = "booth"
+local currentCategory = nil
+local currentSort = "tier_desc"  -- tier_desc, tier_asc, rap_desc, name_asc
+local isLoading = false
+local isDialogOpen = false  -- double-click protection
+local boothEntries = {}
+local inventoryEntries = {}
+local allItemsCache = {}  -- cached full inventory for fast filtering
+local cachedCategoryCounts = {}  -- cached category counts
+local lastCategories = nil  -- category bar optimization
+
+-- Forward declares
+local LoadBoothListings, LoadInventory, BuildCategoryButtons, SetCategoryActive, FilterAndDisplayInventory
+
+-- ==========================
+-- CREATE GUI
+-- ==========================
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = guiName
+ScreenGui.Parent = TargetGuiParent
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.DisplayOrder = 998
+
+-- ─── FLOATING BUBBLE ───
+local Bubble = Instance.new("TextButton")
+Bubble.Name = "MiniBubble"
+Bubble.Size = UDim2.new(0, 50, 0, 50)
+Bubble.Position = UDim2.new(1, -70, 0.5, 35)
+Bubble.BackgroundColor3 = COLORS.bubbleBg
+Bubble.Text = "💰"
+Bubble.TextSize = 22
+Bubble.Font = Enum.Font.GothamBold
+Bubble.TextColor3 = Color3.new(1, 1, 1)
+Bubble.AutoButtonColor = false
+Bubble.Visible = false
+Bubble.Parent = ScreenGui
+Bubble.ZIndex = 100
+Instance.new("UICorner", Bubble).CornerRadius = UDim.new(1, 0)
+local BubbleStroke = Instance.new("UIStroke")
+BubbleStroke.Thickness = 2
+BubbleStroke.Color = COLORS.accentHover
+BubbleStroke.Transparency = 0.3
+BubbleStroke.Parent = Bubble
+
+do
+    local dragging, dragStart, startPos
+    Bubble.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true; dragStart = input.Position; startPos = Bubble.Position
+            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            Bubble.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+-- ─── MAIN FRAME ───
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 640, 0, 580)
+MainFrame.Position = UDim2.new(0.5, -320, 0.5, -290)
+MainFrame.BackgroundColor3 = COLORS.bg
+MainFrame.BorderSizePixel = 0
+MainFrame.ClipsDescendants = true
+MainFrame.Parent = ScreenGui
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Thickness = 1.5; MainStroke.Color = COLORS.divider; MainStroke.Transparency = 0.5; MainStroke.Parent = MainFrame
+
+local Shadow = Instance.new("ImageLabel")
+Shadow.Name = "Shadow"; Shadow.Size = UDim2.new(1, 30, 1, 30); Shadow.Position = UDim2.new(0, -15, 0, -15)
+Shadow.BackgroundTransparency = 1; Shadow.Image = "rbxassetid://5554236805"; Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+Shadow.ImageTransparency = 0.6; Shadow.ScaleType = Enum.ScaleType.Slice; Shadow.SliceCenter = Rect.new(23, 23, 277, 277)
+Shadow.ZIndex = -1; Shadow.Parent = MainFrame
+
+-- ─── TOP BAR ───
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"; TopBar.Size = UDim2.new(1, 0, 0, 44)
+TopBar.BackgroundColor3 = COLORS.topBar; TopBar.BorderSizePixel = 0; TopBar.Parent = MainFrame
+Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 12)
+local TopBarFix = Instance.new("Frame")
+TopBarFix.Size = UDim2.new(1, 0, 0, 14); TopBarFix.Position = UDim2.new(0, 0, 1, -14)
+TopBarFix.BackgroundColor3 = COLORS.topBar; TopBarFix.BorderSizePixel = 0; TopBarFix.Parent = TopBar
+
+local AccentLine = Instance.new("Frame")
+AccentLine.Size = UDim2.new(1, 0, 0, 2); AccentLine.Position = UDim2.new(0, 0, 1, 0)
+AccentLine.BackgroundColor3 = COLORS.accent; AccentLine.BorderSizePixel = 0; AccentLine.Parent = TopBar
+local AccGrad = Instance.new("UIGradient")
+AccGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, COLORS.accent),
+    ColorSequenceKeypoint.new(0.5, COLORS.gold),
+    ColorSequenceKeypoint.new(1, COLORS.accent),
+})
+AccGrad.Parent = AccentLine
+
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(0, 220, 1, 0); Title.Position = UDim2.new(0, 14, 0, 0)
+Title.BackgroundTransparency = 1; Title.Text = "💰 Booth Seller"
+Title.TextColor3 = COLORS.gold; Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Font = Enum.Font.GothamBold; Title.TextSize = 16; Title.Parent = TopBar
+
+local VersionTag = Instance.new("TextLabel")
+VersionTag.Size = UDim2.new(0, 35, 0, 14); VersionTag.Position = UDim2.new(0, 155, 0.5, -7)
+VersionTag.BackgroundColor3 = COLORS.accent; VersionTag.BackgroundTransparency = 0.7
+VersionTag.Text = "v2.0"; VersionTag.TextColor3 = COLORS.accentHover
+VersionTag.Font = Enum.Font.GothamBold; VersionTag.TextSize = 9; VersionTag.Parent = TopBar
+Instance.new("UICorner", VersionTag).CornerRadius = UDim.new(0, 4)
+
+-- Token balance display
+local TokenDisplay = Instance.new("TextLabel")
+TokenDisplay.Name = "TokenDisplay"
+TokenDisplay.Size = UDim2.new(0, 130, 0, 22)
+TokenDisplay.Position = UDim2.new(0, 200, 0.5, -11)
+TokenDisplay.BackgroundColor3 = Color3.fromRGB(35, 35, 20)
+TokenDisplay.BackgroundTransparency = 0.3
+TokenDisplay.Text = "🪙 ---"
+TokenDisplay.TextColor3 = COLORS.gold
+TokenDisplay.Font = Enum.Font.GothamSemibold
+TokenDisplay.TextSize = 11
+TokenDisplay.Parent = TopBar
+Instance.new("UICorner", TokenDisplay).CornerRadius = UDim.new(0, 6)
+
+local function UpdateTokenDisplay()
+    task.spawn(function()
+        local bal = GetTokenBalance()
+        if bal > 0 then
+            TokenDisplay.Text = "🪙 " .. FormatNumber(bal) .. " T"
+        else
+            TokenDisplay.Text = "🪙 ---"
+        end
+    end)
+end
+
+-- ─── TOP BAR BUTTONS ───
+local function CreateTopBtn(name, text, color, size, posX)
+    local btn = Instance.new("TextButton")
+    btn.Name = name; btn.Size = UDim2.new(0, size, 0, 28)
+    btn.Position = UDim2.new(1, posX, 0.5, -14)
+    btn.BackgroundColor3 = color; btn.Text = text
+    btn.Font = Enum.Font.GothamSemibold; btn.TextSize = 12
+    btn.TextColor3 = Color3.new(1, 1, 1); btn.AutoButtonColor = false
+    btn.BorderSizePixel = 0; btn.Parent = TopBar
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    btn.MouseEnter:Connect(function()
+        Tween(btn, {BackgroundColor3 = Color3.new(math.min(color.R+0.08,1), math.min(color.G+0.08,1), math.min(color.B+0.08,1))}, 0.15)
+    end)
+    btn.MouseLeave:Connect(function() Tween(btn, {BackgroundColor3 = color}, 0.15) end)
+    return btn
+end
+
+local CloseBtn    = CreateTopBtn("CloseBtn", "✕", COLORS.red, 30, -38)
+local MinimizeBtn = CreateTopBtn("MinBtn", "─", COLORS.textMuted, 30, -72)
+local RefreshBtn  = CreateTopBtn("RefreshBtn", "🔄", COLORS.accent, 30, -106)
+
+-- ─── TAB BAR ───
+local TabBar = Instance.new("Frame")
+TabBar.Name = "TabBar"; TabBar.Size = UDim2.new(1, -20, 0, 34)
+TabBar.Position = UDim2.new(0, 10, 0, 50)
+TabBar.BackgroundTransparency = 1; TabBar.Parent = MainFrame
+
+local function CreateTabBtn(name, text, icon, posX, width)
+    local btn = Instance.new("TextButton")
+    btn.Name = name; btn.Size = UDim2.new(0, width, 0, 30)
+    btn.Position = UDim2.new(0, posX, 0, 2)
+    btn.BackgroundColor3 = COLORS.tabInactive; btn.Text = icon .. " " .. text
+    btn.Font = Enum.Font.GothamSemibold; btn.TextSize = 12
+    btn.TextColor3 = COLORS.textDim; btn.AutoButtonColor = false
+    btn.BorderSizePixel = 0; btn.Parent = TabBar
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    return btn
+end
+
+local TabBooth     = CreateTabBtn("TabBooth", "Booth Saya", "🏪", 0, 140)
+local TabInventory = CreateTabBtn("TabInventory", "Inventory", "📦", 148, 130)
+local ClearBoothBtn = CreateTopBtn("ClearBoothBtn", "🗑️ Clear", COLORS.red, 70, -180)
+
+-- Booth slot counter
+local SlotCounter = Instance.new("TextLabel")
+SlotCounter.Name = "SlotCounter"
+SlotCounter.Size = UDim2.new(0, 90, 0, 22)
+SlotCounter.Position = UDim2.new(0, 285, 0, 6)
+SlotCounter.BackgroundColor3 = COLORS.bgSecondary
+SlotCounter.BackgroundTransparency = 0.3
+SlotCounter.Text = "Slot: -/" .. MAX_BOOTH_SLOTS
+SlotCounter.TextColor3 = COLORS.textDim
+SlotCounter.Font = Enum.Font.GothamSemibold
+SlotCounter.TextSize = 10
+SlotCounter.Parent = TabBar
+Instance.new("UICorner", SlotCounter).CornerRadius = UDim.new(0, 6)
+
+-- Batch list button (inventory tab only)
+local BatchListBtn = Instance.new("TextButton")
+BatchListBtn.Name = "BatchListBtn"
+BatchListBtn.Size = UDim2.new(0, 100, 0, 28)
+BatchListBtn.Position = UDim2.new(0, 385, 0, 3)
+BatchListBtn.BackgroundColor3 = COLORS.green
+BatchListBtn.Text = "📦 List Semua"
+BatchListBtn.Font = Enum.Font.GothamBold
+BatchListBtn.TextSize = 10
+BatchListBtn.TextColor3 = Color3.new(1, 1, 1)
+BatchListBtn.AutoButtonColor = false
+BatchListBtn.BorderSizePixel = 0
+BatchListBtn.Visible = false
+BatchListBtn.Parent = TabBar
+Instance.new("UICorner", BatchListBtn).CornerRadius = UDim.new(0, 6)
+BatchListBtn.MouseEnter:Connect(function() Tween(BatchListBtn, {BackgroundColor3 = COLORS.greenHover}, 0.15) end)
+BatchListBtn.MouseLeave:Connect(function() Tween(BatchListBtn, {BackgroundColor3 = COLORS.green}, 0.15) end)
+
+-- ─── SEARCH & SORT BAR ───
+local SearchBar = Instance.new("Frame")
+SearchBar.Name = "SearchBar"; SearchBar.Size = UDim2.new(1, -20, 0, 30)
+SearchBar.Position = UDim2.new(0, 10, 0, 88)
+SearchBar.BackgroundTransparency = 1; SearchBar.Parent = MainFrame
+
+local SearchBox = Instance.new("TextBox")
+SearchBox.Name = "SearchBox"; SearchBox.Size = UDim2.new(0, 200, 0, 28)
+SearchBox.Position = UDim2.new(0, 0, 0, 1)
+SearchBox.BackgroundColor3 = COLORS.searchBg; SearchBox.PlaceholderText = "🔍 Cari item..."
+SearchBox.PlaceholderColor3 = COLORS.textMuted; SearchBox.Text = ""
+SearchBox.TextColor3 = COLORS.text; SearchBox.Font = Enum.Font.Gotham
+SearchBox.TextSize = 12; SearchBox.ClearTextOnFocus = false; SearchBox.BorderSizePixel = 0
+SearchBox.Parent = SearchBar
+Instance.new("UICorner", SearchBox).CornerRadius = UDim.new(0, 6)
+local SPad = Instance.new("UIPadding"); SPad.PaddingLeft = UDim.new(0, 8); SPad.Parent = SearchBox
+
+-- Sort buttons
+local SortFrame = Instance.new("Frame")
+SortFrame.Name = "SortFrame"
+SortFrame.Size = UDim2.new(0, 200, 0, 28)
+SortFrame.Position = UDim2.new(0, 208, 0, 1)
+SortFrame.BackgroundTransparency = 1
+SortFrame.Parent = SearchBar
+
+local sortOptions = {
+    {key = "tier_desc", text = "Tier ↓", width = 48},
+    {key = "tier_asc",  text = "Tier ↑", width = 48},
+    {key = "rap_desc",  text = "RAP ↓",  width = 48},
+    {key = "name_asc",  text = "A-Z",    width = 36},
+}
+
+local sortButtons = {}
+local sortX = 0
+for _, opt in ipairs(sortOptions) do
+    local btn = Instance.new("TextButton")
+    btn.Name = "Sort_" .. opt.key
+    btn.Size = UDim2.new(0, opt.width, 0, 22)
+    btn.Position = UDim2.new(0, sortX, 0, 3)
+    btn.BackgroundColor3 = (currentSort == opt.key) and COLORS.accent or COLORS.searchBg
+    btn.Text = opt.text
+    btn.Font = Enum.Font.GothamSemibold
+    btn.TextSize = 9
+    btn.TextColor3 = (currentSort == opt.key) and Color3.new(1,1,1) or COLORS.textDim
+    btn.AutoButtonColor = false
+    btn.BorderSizePixel = 0
+    btn.Parent = SortFrame
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+
+    local sortKey = opt.key
+    btn.MouseButton1Click:Connect(function()
+        currentSort = sortKey
+        for k, b in pairs(sortButtons) do
+            b.BackgroundColor3 = (k == sortKey) and COLORS.accent or COLORS.searchBg
+            b.TextColor3 = (k == sortKey) and Color3.new(1,1,1) or COLORS.textDim
+        end
+        if currentTab == "booth" then LoadBoothListings() else FilterAndDisplayInventory() end
+    end)
+
+    sortButtons[opt.key] = btn
+    sortX = sortX + opt.width + 3
+end
+
+-- Price % input
+local PricePctLabel = Instance.new("TextLabel")
+PricePctLabel.Name = "PricePctLabel"
+PricePctLabel.Size = UDim2.new(0, 55, 0, 28)
+PricePctLabel.Position = UDim2.new(1, -120, 0, 1)
+PricePctLabel.BackgroundTransparency = 1
+PricePctLabel.Text = "Harga%:"
+PricePctLabel.TextColor3 = COLORS.textDim
+PricePctLabel.Font = Enum.Font.Gotham
+PricePctLabel.TextSize = 10
+PricePctLabel.TextXAlignment = Enum.TextXAlignment.Right
+PricePctLabel.Parent = SearchBar
+
+local PricePctBox = Instance.new("TextBox")
+PricePctBox.Name = "PricePctBox"
+PricePctBox.Size = UDim2.new(0, 40, 0, 24)
+PricePctBox.Position = UDim2.new(1, -62, 0, 3)
+PricePctBox.BackgroundColor3 = COLORS.searchBg
+PricePctBox.Text = tostring(DEFAULT_PRICE_PCT)
+PricePctBox.TextColor3 = COLORS.gold
+PricePctBox.Font = Enum.Font.GothamSemibold
+PricePctBox.TextSize = 11
+PricePctBox.ClearTextOnFocus = true
+PricePctBox.BorderSizePixel = 0
+PricePctBox.Parent = SearchBar
+Instance.new("UICorner", PricePctBox).CornerRadius = UDim.new(0, 6)
+
+local PricePctSuffix = Instance.new("TextLabel")
+PricePctSuffix.Size = UDim2.new(0, 16, 0, 28)
+PricePctSuffix.Position = UDim2.new(1, -20, 0, 1)
+PricePctSuffix.BackgroundTransparency = 1
+PricePctSuffix.Text = "%"
+PricePctSuffix.TextColor3 = COLORS.textDim
+PricePctSuffix.Font = Enum.Font.GothamBold
+PricePctSuffix.TextSize = 11
+PricePctSuffix.Parent = SearchBar
+
+-- ─── CATEGORY FILTER BAR ───
+local CATEGORY_BAR_HEIGHT = 32
+
+local CategoryBar = Instance.new("Frame")
+CategoryBar.Name = "CategoryBar"
+CategoryBar.Size = UDim2.new(1, -20, 0, CATEGORY_BAR_HEIGHT)
+CategoryBar.Position = UDim2.new(0, 10, 0, 120)
+CategoryBar.BackgroundTransparency = 1
+CategoryBar.Visible = false
+CategoryBar.Parent = MainFrame
+
+local CategoryScroll = Instance.new("ScrollingFrame")
+CategoryScroll.Name = "CatScroll"; CategoryScroll.Size = UDim2.new(1, 0, 1, 0)
+CategoryScroll.BackgroundTransparency = 1; CategoryScroll.BorderSizePixel = 0
+CategoryScroll.ScrollBarThickness = 0; CategoryScroll.ScrollingDirection = Enum.ScrollingDirection.X
+CategoryScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+CategoryScroll.AutomaticCanvasSize = Enum.AutomaticSize.X
+CategoryScroll.Parent = CategoryBar
+
+local CatLayout = Instance.new("UIListLayout")
+CatLayout.FillDirection = Enum.FillDirection.Horizontal
+CatLayout.Padding = UDim.new(0, 5)
+CatLayout.SortOrder = Enum.SortOrder.LayoutOrder
+CatLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+CatLayout.Parent = CategoryScroll
+
+local categoryIcons = {
+    ["Fish"] = "🐟", ["Fishing Rods"] = "🎣", ["Boats"] = "🚤", ["Emotes"] = "💃",
+    ["Enchant Stones"] = "💎", ["Hats"] = "🎩", ["Shoes"] = "👟", ["Shirts"] = "👕",
+    ["Pants"] = "👖", ["Tools"] = "🔧", ["Accessories"] = "💍", ["Backpacks"] = "🎒",
+    ["Furniture"] = "🪑", ["Toys"] = "🧸", ["Resources"] = "📦",
+}
+
+local categoryButtons = {}
+
+SetCategoryActive = function(catName)
+    currentCategory = catName
+    for name, btn in pairs(categoryButtons) do
+        if name == catName then
+            btn.BackgroundColor3 = COLORS.accent
+            btn.TextColor3 = Color3.new(1, 1, 1)
+        else
+            btn.BackgroundColor3 = COLORS.searchBg
+            btn.TextColor3 = COLORS.textDim
+        end
+    end
+end
+
+BuildCategoryButtons = function(categories)
+    -- Optimization: skip rebuild if categories haven't changed
+    local catKey = ""
+    local sorted = {}
+    for cat, count in pairs(categories) do
+        table.insert(sorted, {name = cat, count = count})
+        catKey = catKey .. cat .. ":" .. count .. ";"
+    end
+    if catKey == lastCategories then return end
+    lastCategories = catKey
+
+    for _, child in ipairs(CategoryScroll:GetChildren()) do
+        if child:IsA("TextButton") then child:Destroy() end
+    end
+    categoryButtons = {}
+
+    -- "All" button
+    local allBtn = Instance.new("TextButton")
+    allBtn.Name = "Cat_All"; allBtn.Size = UDim2.new(0, 60, 0, 24)
+    allBtn.BackgroundColor3 = currentCategory == nil and COLORS.accent or COLORS.searchBg
+    allBtn.Text = "📋 Semua"
+    allBtn.Font = Enum.Font.GothamSemibold; allBtn.TextSize = 10
+    allBtn.TextColor3 = currentCategory == nil and Color3.new(1,1,1) or COLORS.textDim
+    allBtn.AutoButtonColor = false; allBtn.BorderSizePixel = 0
+    allBtn.LayoutOrder = 0; allBtn.Parent = CategoryScroll
+    Instance.new("UICorner", allBtn).CornerRadius = UDim.new(0, 12)
+    categoryButtons["__ALL__"] = allBtn
+
+    allBtn.MouseButton1Click:Connect(function()
+        currentCategory = nil
+        SetCategoryActive(nil)
+        allBtn.BackgroundColor3 = COLORS.accent
+        allBtn.TextColor3 = Color3.new(1, 1, 1)
+        if FilterAndDisplayInventory then FilterAndDisplayInventory() end
+    end)
+
+    table.sort(sorted, function(a, b) return a.name < b.name end)
+
+    for i, info in ipairs(sorted) do
+        local icon = categoryIcons[info.name] or "📁"
+        local displayText = icon .. " " .. info.name .. " (" .. info.count .. ")"
+        local textWidth = math.max(#displayText * 6, 70)
+
+        local btn = Instance.new("TextButton")
+        btn.Name = "Cat_" .. info.name; btn.Size = UDim2.new(0, textWidth, 0, 24)
+        btn.BackgroundColor3 = (currentCategory == info.name) and COLORS.accent or COLORS.searchBg
+        btn.Text = displayText
+        btn.Font = Enum.Font.GothamSemibold; btn.TextSize = 9
+        btn.TextColor3 = (currentCategory == info.name) and Color3.new(1,1,1) or COLORS.textDim
+        btn.AutoButtonColor = false; btn.BorderSizePixel = 0
+        btn.LayoutOrder = i; btn.Parent = CategoryScroll
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 12)
+        categoryButtons[info.name] = btn
+
+        btn.MouseEnter:Connect(function()
+            if currentCategory ~= info.name then Tween(btn, {BackgroundColor3 = COLORS.cardBgHover}, 0.15) end
+        end)
+        btn.MouseLeave:Connect(function()
+            if currentCategory ~= info.name then Tween(btn, {BackgroundColor3 = COLORS.searchBg}, 0.15) end
+        end)
+
+        local catName = info.name
+        btn.MouseButton1Click:Connect(function()
+            SetCategoryActive(catName)
+            allBtn.BackgroundColor3 = COLORS.searchBg
+            allBtn.TextColor3 = COLORS.textDim
+            if FilterAndDisplayInventory then FilterAndDisplayInventory() end
+        end)
+    end
+end
+
+-- ─── SCROLL AREA ───
+local SCROLL_Y_BOOTH = 122
+local SCROLL_Y_INV   = 122 + CATEGORY_BAR_HEIGHT + 4
+
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Name = "ItemScroll"
+Scroll.Size = UDim2.new(1, -20, 1, -160)
+Scroll.Position = UDim2.new(0, 10, 0, SCROLL_Y_BOOTH)
+Scroll.BackgroundTransparency = 1
+Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll.ScrollBarThickness = 4
+Scroll.ScrollBarImageColor3 = COLORS.accent
+Scroll.BorderSizePixel = 0
+Scroll.Parent = MainFrame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = Scroll
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- ─── STATUS BAR ───
+local StatusBar = Instance.new("Frame")
+StatusBar.Name = "StatusBar"; StatusBar.Size = UDim2.new(1, 0, 0, 28)
+StatusBar.Position = UDim2.new(0, 0, 1, -28)
+StatusBar.BackgroundColor3 = COLORS.topBar; StatusBar.BorderSizePixel = 0; StatusBar.Parent = MainFrame
+Instance.new("UICorner", StatusBar).CornerRadius = UDim.new(0, 8)
+local StatusFix = Instance.new("Frame")
+StatusFix.Size = UDim2.new(1, 0, 0, 10); StatusFix.Position = UDim2.new(0, 0, 0, 0)
+StatusFix.BackgroundColor3 = COLORS.topBar; StatusFix.BorderSizePixel = 0; StatusFix.Parent = StatusBar
+
+local StatusText = Instance.new("TextLabel")
+StatusText.Name = "StatusText"; StatusText.Size = UDim2.new(0.65, 0, 1, 0)
+StatusText.Position = UDim2.new(0, 12, 0, 0); StatusText.BackgroundTransparency = 1
+StatusText.Text = "Ready"; StatusText.TextColor3 = COLORS.textDim
+StatusText.TextXAlignment = Enum.TextXAlignment.Left
+StatusText.Font = Enum.Font.Gotham; StatusText.TextSize = 11; StatusText.Parent = StatusBar
+
+local StatsText = Instance.new("TextLabel")
+StatsText.Name = "StatsText"; StatsText.Size = UDim2.new(0.35, -12, 1, 0)
+StatsText.Position = UDim2.new(0.65, 0, 0, 0); StatsText.BackgroundTransparency = 1
+StatsText.Text = ""; StatsText.TextColor3 = COLORS.textMuted
+StatsText.TextXAlignment = Enum.TextXAlignment.Right
+StatsText.Font = Enum.Font.Gotham; StatsText.TextSize = 10; StatsText.Parent = StatusBar
+
+-- ─── RESIZE HANDLE ───
+local MIN_WIDTH, MIN_HEIGHT = 500, 380
+local MAX_WIDTH, MAX_HEIGHT = 950, 750
+
+local ResizeHandle = Instance.new("TextButton")
+ResizeHandle.Name = "ResizeHandle"; ResizeHandle.Size = UDim2.new(0, 22, 0, 22)
+ResizeHandle.Position = UDim2.new(1, -22, 1, -22)
+ResizeHandle.BackgroundColor3 = COLORS.divider; ResizeHandle.BackgroundTransparency = 0.5
+ResizeHandle.Text = "⇲"; ResizeHandle.TextSize = 14; ResizeHandle.TextColor3 = COLORS.textMuted
+ResizeHandle.Font = Enum.Font.GothamBold; ResizeHandle.AutoButtonColor = false
+ResizeHandle.BorderSizePixel = 0; ResizeHandle.ZIndex = 10; ResizeHandle.Parent = MainFrame
+Instance.new("UICorner", ResizeHandle).CornerRadius = UDim.new(0, 4)
+
+ResizeHandle.MouseEnter:Connect(function() Tween(ResizeHandle, {BackgroundTransparency = 0, TextColor3 = COLORS.accent}, 0.15) end)
+ResizeHandle.MouseLeave:Connect(function() Tween(ResizeHandle, {BackgroundTransparency = 0.5, TextColor3 = COLORS.textMuted}, 0.15) end)
+
+do
+    local resizing, resizeStart, startSize = false, nil, nil
+    ResizeHandle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            resizing = true; resizeStart = input.Position; startSize = MainFrame.AbsoluteSize
+            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then resizing = false end end)
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - resizeStart
+            MainFrame.Size = UDim2.new(0, math.clamp(startSize.X + delta.X, MIN_WIDTH, MAX_WIDTH), 0, math.clamp(startSize.Y + delta.Y, MIN_HEIGHT, MAX_HEIGHT))
+        end
+    end)
+end
+
+-- ─── DRAG ───
+do
+    local dragging, dragInput, dragStart, startPos
+    TopBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true; dragStart = input.Position; startPos = MainFrame.Position
+            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+        end
+    end)
+    TopBar.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+-- ─── MINIMIZE / RESTORE ───
+local isMinimized = false
+local lastFrameSize = UDim2.new(0, 640, 0, 580)
+
+local function MinimizeToWindow()
+    if isMinimized then return end
+    isMinimized = true; lastFrameSize = MainFrame.Size
+    Tween(MainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    task.wait(0.3); MainFrame.Visible = false; Bubble.Visible = true
+    Bubble.Size = UDim2.new(0, 0, 0, 0)
+    Tween(Bubble, {Size = UDim2.new(0, 50, 0, 50)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+end
+
+local function RestoreFromBubble()
+    if not isMinimized then return end
+    isMinimized = false
+    Tween(Bubble, {Size = UDim2.new(0, 0, 0, 0)}, 0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    task.wait(0.2); Bubble.Visible = false; MainFrame.Visible = true
+    MainFrame.Size = UDim2.new(0, 0, 0, 0)
+    Tween(MainFrame, {Size = lastFrameSize}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+end
+
+Bubble.MouseButton1Click:Connect(RestoreFromBubble)
+MinimizeBtn.MouseButton1Click:Connect(MinimizeToWindow)
+CloseBtn.MouseButton1Click:Connect(function()
+    Tween(MainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    task.wait(0.25); ScreenGui:Destroy()
+end)
+
+-- ==========================
+-- LOADING/EMPTY STATES
+-- ==========================
+local function ShowLoading(show, msg)
+    local existing = Scroll:FindFirstChild("LoadingFrame")
+    if existing then existing:Destroy() end
+    if not show then return end
+    local lf = Instance.new("Frame"); lf.Name = "LoadingFrame"
+    lf.Size = UDim2.new(1, 0, 0, 60); lf.BackgroundTransparency = 1; lf.LayoutOrder = -1; lf.Parent = Scroll
+    local lt = Instance.new("TextLabel"); lt.Size = UDim2.new(1, 0, 1, 0); lt.BackgroundTransparency = 1
+    lt.Text = msg or "⏳ Memuat data..."; lt.TextColor3 = COLORS.textDim
+    lt.Font = Enum.Font.GothamSemibold; lt.TextSize = 14; lt.Parent = lf
+end
+
+local function ShowEmpty(msg)
+    local ef = Instance.new("Frame"); ef.Name = "EmptyFrame"
+    ef.Size = UDim2.new(1, 0, 0, 100); ef.BackgroundTransparency = 1; ef.LayoutOrder = 0; ef.Parent = Scroll
+    local et = Instance.new("TextLabel"); et.Size = UDim2.new(1, 0, 1, 0); et.BackgroundTransparency = 1
+    et.Text = msg or "📭 Tidak ada item."; et.TextColor3 = COLORS.textMuted
+    et.Font = Enum.Font.Gotham; et.TextSize = 13; et.Parent = ef
+end
+
+local function ClearScroll()
+    for _, child in ipairs(Scroll:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+end
+
+-- ==========================
+-- CONFIRMATION DIALOG
+-- ==========================
+local function ShowConfirmDialog(title, message, onConfirm, onCancel)
+    if isDialogOpen then return end
+    isDialogOpen = true
+
+    local overlay = Instance.new("Frame")
+    overlay.Name = "ConfirmOverlay"; overlay.Size = UDim2.new(1, 0, 1, 0)
+    overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0); overlay.BackgroundTransparency = 0.5
+    overlay.BorderSizePixel = 0; overlay.ZIndex = 50; overlay.Parent = MainFrame
+
+    local dialog = Instance.new("Frame")
+    dialog.Name = "DialogBox"; dialog.Size = UDim2.new(0, 320, 0, 170)
+    dialog.Position = UDim2.new(0.5, -160, 0.5, -85)
+    dialog.BackgroundColor3 = COLORS.bgSecondary; dialog.BorderSizePixel = 0
+    dialog.ZIndex = 51; dialog.Parent = overlay
+    Instance.new("UICorner", dialog).CornerRadius = UDim.new(0, 12)
+    local ds = Instance.new("UIStroke"); ds.Thickness = 1.5; ds.Color = COLORS.accent; ds.Transparency = 0.3; ds.Parent = dialog
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, -20, 0, 28); titleLabel.Position = UDim2.new(0, 10, 0, 12)
+    titleLabel.BackgroundTransparency = 1; titleLabel.Text = title or "Konfirmasi"
+    titleLabel.TextColor3 = COLORS.gold; titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextSize = 15; titleLabel.TextXAlignment = Enum.TextXAlignment.Center
+    titleLabel.ZIndex = 52; titleLabel.Parent = dialog
+
+    local divider = Instance.new("Frame")
+    divider.Size = UDim2.new(1, -20, 0, 1); divider.Position = UDim2.new(0, 10, 0, 44)
+    divider.BackgroundColor3 = COLORS.divider; divider.BorderSizePixel = 0; divider.ZIndex = 52; divider.Parent = dialog
+
+    local msgLabel = Instance.new("TextLabel")
+    msgLabel.Size = UDim2.new(1, -24, 0, 55); msgLabel.Position = UDim2.new(0, 12, 0, 48)
+    msgLabel.BackgroundTransparency = 1; msgLabel.Text = message or "Apakah kamu yakin?"
+    msgLabel.TextColor3 = COLORS.text; msgLabel.Font = Enum.Font.Gotham; msgLabel.TextSize = 12
+    msgLabel.TextWrapped = true; msgLabel.TextXAlignment = Enum.TextXAlignment.Center
+    msgLabel.ZIndex = 52; msgLabel.Parent = dialog
+
+    local btnYes = Instance.new("TextButton")
+    btnYes.Size = UDim2.new(0, 120, 0, 34); btnYes.Position = UDim2.new(0.5, -130, 1, -50)
+    btnYes.BackgroundColor3 = COLORS.green; btnYes.Text = "✅ Ya, Lanjut"
+    btnYes.Font = Enum.Font.GothamBold; btnYes.TextSize = 12; btnYes.TextColor3 = Color3.new(1,1,1)
+    btnYes.AutoButtonColor = false; btnYes.BorderSizePixel = 0; btnYes.ZIndex = 52; btnYes.Parent = dialog
+    Instance.new("UICorner", btnYes).CornerRadius = UDim.new(0, 8)
+
+    local btnNo = Instance.new("TextButton")
+    btnNo.Size = UDim2.new(0, 120, 0, 34); btnNo.Position = UDim2.new(0.5, 10, 1, -50)
+    btnNo.BackgroundColor3 = COLORS.textMuted; btnNo.Text = "❌ Batal"
+    btnNo.Font = Enum.Font.GothamBold; btnNo.TextSize = 12; btnNo.TextColor3 = Color3.new(1,1,1)
+    btnNo.AutoButtonColor = false; btnNo.BorderSizePixel = 0; btnNo.ZIndex = 52; btnNo.Parent = dialog
+    Instance.new("UICorner", btnNo).CornerRadius = UDim.new(0, 8)
+
+    btnYes.MouseEnter:Connect(function() Tween(btnYes, {BackgroundColor3 = COLORS.greenHover}, 0.15) end)
+    btnYes.MouseLeave:Connect(function() Tween(btnYes, {BackgroundColor3 = COLORS.green}, 0.15) end)
+    btnNo.MouseEnter:Connect(function() Tween(btnNo, {BackgroundColor3 = Color3.fromRGB(110,110,130)}, 0.15) end)
+    btnNo.MouseLeave:Connect(function() Tween(btnNo, {BackgroundColor3 = COLORS.textMuted}, 0.15) end)
+
+    -- Entrance animation
+    dialog.Size = UDim2.new(0, 0, 0, 0); dialog.Position = UDim2.new(0.5, 0, 0.5, 0)
+    overlay.BackgroundTransparency = 1
+    Tween(overlay, {BackgroundTransparency = 0.5}, 0.2)
+    Tween(dialog, {Size = UDim2.new(0, 320, 0, 170), Position = UDim2.new(0.5, -160, 0.5, -85)}, 0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+
+    local function CloseDialog()
+        Tween(dialog, {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}, 0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        Tween(overlay, {BackgroundTransparency = 1}, 0.2)
+        task.wait(0.2)
+        if overlay and overlay.Parent then overlay:Destroy() end
+        isDialogOpen = false
+    end
+
+    btnYes.MouseButton1Click:Connect(function()
+        CloseDialog()
+        if onConfirm then onConfirm() end
+    end)
+    btnNo.MouseButton1Click:Connect(function()
+        CloseDialog()
+        if onCancel then onCancel() end
+    end)
+    overlay.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            local ap = dialog.AbsolutePosition; local as = dialog.AbsoluteSize; local mp = input.Position
+            if mp.X < ap.X or mp.X > ap.X + as.X or mp.Y < ap.Y or mp.Y > ap.Y + as.Y then
+                CloseDialog()
+                if onCancel then onCancel() end
+            end
+        end
+    end)
+end
+
+-- ==========================
+-- SORT HELPER
+-- ==========================
+local function SortEntries(entries)
+    table.sort(entries, function(a, b)
+        if currentSort == "tier_desc" then
+            if (a.ItemTier or 0) ~= (b.ItemTier or 0) then return (a.ItemTier or 0) > (b.ItemTier or 0) end
+            return (a.ItemName or "") < (b.ItemName or "")
+        elseif currentSort == "tier_asc" then
+            if (a.ItemTier or 0) ~= (b.ItemTier or 0) then return (a.ItemTier or 0) < (b.ItemTier or 0) end
+            return (a.ItemName or "") < (b.ItemName or "")
+        elseif currentSort == "rap_desc" then
+            if (a.RAP or 0) ~= (b.RAP or 0) then return (a.RAP or 0) > (b.RAP or 0) end
+            return (a.ItemName or "") < (b.ItemName or "")
+        elseif currentSort == "name_asc" then
+            return (a.ItemName or "") < (b.ItemName or "")
+        end
+        return false
+    end)
+end
+
+-- ==========================
+-- BOOTH CARD
+-- ==========================
+local function CreateBoothCard(data, layoutOrder)
+    local card = Instance.new("Frame")
+    card.Name = "BoothCard_" .. layoutOrder
+    card.Size = UDim2.new(1, -4, 0, 80)
+    card.BackgroundColor3 = COLORS.listedBg
+    card.BorderSizePixel = 0; card.LayoutOrder = layoutOrder
+    card.Parent = Scroll; card.ClipsDescendants = true
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 8)
+    local cs = Instance.new("UIStroke"); cs.Thickness = 1; cs.Color = COLORS.listedBorder; cs.Transparency = 0.6; cs.Parent = card
+
+    card.MouseEnter:Connect(function() Tween(card, {BackgroundColor3 = Color3.fromRGB(30, 48, 65)}, 0.15) end)
+    card.MouseLeave:Connect(function() Tween(card, {BackgroundColor3 = COLORS.listedBg}, 0.15) end)
+
+    -- Icon
+    local RankLabel = Instance.new("TextLabel")
+    RankLabel.Size = UDim2.new(0, 32, 0, 32); RankLabel.Position = UDim2.new(0, 8, 0.5, -16)
+    RankLabel.BackgroundColor3 = COLORS.accent; RankLabel.BackgroundTransparency = 0.3
+    RankLabel.Text = "🏪"; RankLabel.TextSize = 16; RankLabel.TextColor3 = Color3.new(1,1,1)
+    RankLabel.Font = Enum.Font.GothamBold; RankLabel.Parent = card
+    Instance.new("UICorner", RankLabel).CornerRadius = UDim.new(0, 6)
+
+    -- Name
+    local NameLabel = Instance.new("TextLabel")
+    NameLabel.Size = UDim2.new(0, 200, 0, 18); NameLabel.Position = UDim2.new(0, 48, 0, 8)
+    NameLabel.BackgroundTransparency = 1; NameLabel.Text = data.ItemName or "Unknown"
+    NameLabel.TextColor3 = tierColors[data.ItemTier] or COLORS.text
+    NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    NameLabel.Font = Enum.Font.GothamBold; NameLabel.TextSize = 14
+    NameLabel.TextTruncate = Enum.TextTruncate.AtEnd; NameLabel.Parent = card
+
+    -- Tier + Type
+    local TierLabel = Instance.new("TextLabel")
+    TierLabel.Size = UDim2.new(0, 200, 0, 14); TierLabel.Position = UDim2.new(0, 48, 0, 26)
+    TierLabel.BackgroundTransparency = 1
+    TierLabel.Text = (tierNames[data.ItemTier] or "?") .. " • " .. (data.ItemType or "?")
+    TierLabel.TextColor3 = COLORS.textDim; TierLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TierLabel.Font = Enum.Font.Gotham; TierLabel.TextSize = 10; TierLabel.Parent = card
+
+    -- RAP/ALP info
+    local rapAlpParts = {}
+    if data.RAP and data.RAP > 0 then
+        local pct = math.floor((data.Price / data.RAP) * 100)
+        table.insert(rapAlpParts, string.format("RAP: %s (%d%%)", FormatCompact(data.RAP), pct))
+    else table.insert(rapAlpParts, "RAP: -") end
+    if data.ALP and data.ALP.avg and data.ALP.avg > 0 then
+        local alpPct = math.floor((data.Price / data.ALP.avg) * 100)
+        table.insert(rapAlpParts, string.format("ALP: %s (%d%%)", FormatCompact(data.ALP.avg), alpPct))
+    end
+
+    local RapAlpLabel = Instance.new("TextLabel")
+    RapAlpLabel.Size = UDim2.new(0, 300, 0, 14); RapAlpLabel.Position = UDim2.new(0, 48, 0, 44)
+    RapAlpLabel.BackgroundTransparency = 1; RapAlpLabel.Text = table.concat(rapAlpParts, " │ ")
+    RapAlpLabel.TextColor3 = COLORS.textDim; RapAlpLabel.TextXAlignment = Enum.TextXAlignment.Left
+    RapAlpLabel.Font = Enum.Font.Gotham; RapAlpLabel.TextSize = 10; RapAlpLabel.Parent = card
+
+    -- Current price
+    local PriceLabel = Instance.new("TextLabel")
+    PriceLabel.Size = UDim2.new(0, 90, 0, 20); PriceLabel.Position = UDim2.new(1, -270, 0, 8)
+    PriceLabel.BackgroundTransparency = 1; PriceLabel.Text = FormatNumber(data.Price) .. " T"
+    PriceLabel.TextColor3 = COLORS.gold; PriceLabel.TextXAlignment = Enum.TextXAlignment.Right
+    PriceLabel.Font = Enum.Font.GothamBold; PriceLabel.TextSize = 14; PriceLabel.Parent = card
+
+    -- New price input
+    local PriceInput = Instance.new("TextBox")
+    PriceInput.Size = UDim2.new(0, 70, 0, 24); PriceInput.Position = UDim2.new(1, -270, 0, 38)
+    PriceInput.BackgroundColor3 = COLORS.inputBg; PriceInput.Text = tostring(data.Price)
+    PriceInput.PlaceholderText = "Harga baru"; PriceInput.PlaceholderColor3 = COLORS.textMuted
+    PriceInput.TextColor3 = COLORS.text; PriceInput.Font = Enum.Font.Gotham
+    PriceInput.TextSize = 11; PriceInput.ClearTextOnFocus = true; PriceInput.BorderSizePixel = 0
+    PriceInput.Parent = card
+    Instance.new("UICorner", PriceInput).CornerRadius = UDim.new(0, 4)
+
+    -- Update button
+    local UpdateBtn = Instance.new("TextButton")
+    UpdateBtn.Size = UDim2.new(0, 72, 0, 28); UpdateBtn.Position = UDim2.new(1, -170, 0.5, -14)
+    UpdateBtn.BackgroundColor3 = COLORS.accent; UpdateBtn.Text = "📝 Update"
+    UpdateBtn.Font = Enum.Font.GothamBold; UpdateBtn.TextSize = 11; UpdateBtn.TextColor3 = Color3.new(1,1,1)
+    UpdateBtn.AutoButtonColor = false; UpdateBtn.BorderSizePixel = 0; UpdateBtn.Parent = card
+    Instance.new("UICorner", UpdateBtn).CornerRadius = UDim.new(0, 6)
+    UpdateBtn.MouseEnter:Connect(function() Tween(UpdateBtn, {BackgroundColor3 = COLORS.accentHover}, 0.15) end)
+    UpdateBtn.MouseLeave:Connect(function() Tween(UpdateBtn, {BackgroundColor3 = COLORS.accent}, 0.15) end)
+
+    UpdateBtn.MouseButton1Click:Connect(function()
+        if isDialogOpen then return end
+        local newPrice = tonumber(PriceInput.Text)
+        if not newPrice or newPrice <= 0 then StatusText.Text = "❌ Harga tidak valid!"; return end
+
+        ShowConfirmDialog(
+            "📝 Update Harga",
+            string.format("Update harga %s\ndari %s T → %s T?", data.ItemName or "item", FormatNumber(data.Price), FormatNumber(newPrice)),
+            function()
+                UpdateBtn.Text = "⏳..."
+                StatusText.Text = "📝 Mengupdate harga " .. (data.ItemName or "item") .. "..."
+                task.spawn(function()
+                    local delOk, delErr = pcall(function()
+                        return TradeData.Remotes.DeleteSaleListing:InvokeServer("Booth", data.ListingKey)
+                    end)
+                    if not delOk then
+                        UpdateBtn.Text = "❌ Gagal"; StatusText.Text = "❌ Gagal hapus: " .. tostring(delErr)
+                        task.wait(2); UpdateBtn.Text = "📝 Update"; return
+                    end
+                    task.wait(LISTING_COOLDOWN)
+                    local listOk, listResult = pcall(function()
+                        return TradeData.Remotes.CreateSaleListing:InvokeServer("Booth", data.ItemType, data.UUID, newPrice)
+                    end)
+                    if listOk then
+                        UpdateBtn.Text = "✅ OK"; PriceLabel.Text = FormatNumber(newPrice) .. " T"
+                        StatusText.Text = "✅ Harga " .. (data.ItemName or "item") .. " diupdate ke " .. FormatNumber(newPrice)
+                        UpdateTokenDisplay()
+                    else
+                        local errStr = tostring(listResult):lower()
+                        if errStr:find("not found") or errStr:find("invalid") or errStr:find("sold") then
+                            UpdateBtn.Text = "⚠️ Terjual?"; StatusText.Text = "⚠️ Item mungkin sudah terjual saat proses update!"
+                        else
+                            UpdateBtn.Text = "❌ Gagal"; StatusText.Text = "❌ Gagal re-list: " .. tostring(listResult)
+                        end
+                    end
+                    task.wait(2); UpdateBtn.Text = "📝 Update"
+                end)
+            end
+        )
+    end)
+
+    -- Remove button
+    local RemoveBtn = Instance.new("TextButton")
+    RemoveBtn.Size = UDim2.new(0, 66, 0, 28); RemoveBtn.Position = UDim2.new(1, -88, 0.5, -14)
+    RemoveBtn.BackgroundColor3 = COLORS.red; RemoveBtn.Text = "🗑️ Hapus"
+    RemoveBtn.Font = Enum.Font.GothamBold; RemoveBtn.TextSize = 11; RemoveBtn.TextColor3 = Color3.new(1,1,1)
+    RemoveBtn.AutoButtonColor = false; RemoveBtn.BorderSizePixel = 0; RemoveBtn.Parent = card
+    Instance.new("UICorner", RemoveBtn).CornerRadius = UDim.new(0, 6)
+    RemoveBtn.MouseEnter:Connect(function() Tween(RemoveBtn, {BackgroundColor3 = COLORS.redHover}, 0.15) end)
+    RemoveBtn.MouseLeave:Connect(function() Tween(RemoveBtn, {BackgroundColor3 = COLORS.red}, 0.15) end)
+
+    RemoveBtn.MouseButton1Click:Connect(function()
+        if isDialogOpen then return end
+        ShowConfirmDialog(
+            "🗑️ Hapus Listing",
+            string.format("Hapus %s (%s T) dari booth?\nItem akan kembali ke inventory.", data.ItemName or "item", FormatNumber(data.Price)),
+            function()
+                RemoveBtn.Text = "⏳..."
+                task.spawn(function()
+                    local ok, err = pcall(function() return TradeData.Remotes.DeleteSaleListing:InvokeServer("Booth", data.ListingKey) end)
+                    if ok then
+                        StatusText.Text = "✅ " .. (data.ItemName or "item") .. " dihapus dari booth"
+                        Tween(card, {BackgroundTransparency = 1, Size = UDim2.new(1, -4, 0, 0)}, 0.3)
+                        task.wait(0.3); card:Destroy(); task.wait(0.05)
+                        Scroll.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+                        UpdateTokenDisplay()
+                    else
+                        RemoveBtn.Text = "❌"; StatusText.Text = "❌ Gagal hapus: " .. tostring(err)
+                        task.wait(2); RemoveBtn.Text = "🗑️ Hapus"
+                    end
+                end)
+            end
+        )
+    end)
+
+    -- Entry animation
+    card.Position = UDim2.new(0.3, 0, 0, 0); card.BackgroundTransparency = 0.5
+    Tween(card, {Position = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 0}, 0.3 + layoutOrder * 0.03)
+    return card
+end
+
+-- ==========================
+-- INVENTORY CARD
+-- ==========================
+local function CreateInventoryCard(data, layoutOrder)
+    local isListed = data.IsListed
+
+    local card = Instance.new("Frame")
+    card.Name = "InvCard_" .. layoutOrder
+    card.Size = UDim2.new(1, -4, 0, 72)
+    card.BackgroundColor3 = isListed and Color3.fromRGB(35, 35, 28) or COLORS.cardBg
+    card.BorderSizePixel = 0; card.LayoutOrder = layoutOrder
+    card.Parent = Scroll; card.ClipsDescendants = true
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 8)
+
+    if isListed then
+        local ls = Instance.new("UIStroke"); ls.Thickness = 1; ls.Color = COLORS.orange; ls.Transparency = 0.5; ls.Parent = card
+    end
+
+    card.MouseEnter:Connect(function() Tween(card, {BackgroundColor3 = isListed and Color3.fromRGB(42, 42, 32) or COLORS.cardBgHover}, 0.15) end)
+    card.MouseLeave:Connect(function() Tween(card, {BackgroundColor3 = isListed and Color3.fromRGB(35, 35, 28) or COLORS.cardBg}, 0.15) end)
+
+    -- Icon
+    local RankLabel = Instance.new("TextLabel")
+    RankLabel.Size = UDim2.new(0, 28, 0, 28); RankLabel.Position = UDim2.new(0, 8, 0.5, -14)
+    RankLabel.BackgroundColor3 = tierColors[data.ItemTier] or COLORS.bgSecondary; RankLabel.BackgroundTransparency = 0.4
+    RankLabel.Text = isListed and "🏪" or "📦"; RankLabel.TextSize = 14
+    RankLabel.TextColor3 = Color3.new(1,1,1); RankLabel.Font = Enum.Font.GothamBold; RankLabel.Parent = card
+    Instance.new("UICorner", RankLabel).CornerRadius = UDim.new(0, 6)
+
+    -- Name
+    local NameLabel = Instance.new("TextLabel")
+    NameLabel.Size = UDim2.new(0, 180, 0, 16); NameLabel.Position = UDim2.new(0, 42, 0, 6)
+    NameLabel.BackgroundTransparency = 1; NameLabel.Text = data.ItemName or "Unknown"
+    NameLabel.TextColor3 = tierColors[data.ItemTier] or COLORS.text
+    NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    NameLabel.Font = Enum.Font.GothamBold; NameLabel.TextSize = 12
+    NameLabel.TextTruncate = Enum.TextTruncate.AtEnd; NameLabel.Parent = card
+
+    -- Listed badge
+    if isListed then
+        local Badge = Instance.new("TextLabel")
+        Badge.Size = UDim2.new(0, 42, 0, 12); Badge.Position = UDim2.new(0, 226, 0, 8)
+        Badge.BackgroundColor3 = COLORS.orange; Badge.BackgroundTransparency = 0.3
+        Badge.Text = "LISTED"; Badge.TextSize = 7; Badge.TextColor3 = Color3.new(1,1,1)
+        Badge.Font = Enum.Font.GothamBold; Badge.Parent = card
+        Instance.new("UICorner", Badge).CornerRadius = UDim.new(0, 3)
+    end
+
+    -- Info line
+    local InfoLabel = Instance.new("TextLabel")
+    InfoLabel.Size = UDim2.new(0, 220, 0, 12); InfoLabel.Position = UDim2.new(0, 42, 0, 23)
+    InfoLabel.BackgroundTransparency = 1
+    InfoLabel.Text = (tierNames[data.ItemTier] or "?") .. " • " .. (data.ItemType or "?")
+    InfoLabel.TextColor3 = COLORS.textDim; InfoLabel.TextXAlignment = Enum.TextXAlignment.Left
+    InfoLabel.Font = Enum.Font.Gotham; InfoLabel.TextSize = 9; InfoLabel.Parent = card
+
+    -- RAP/ALP
+    local rapAlpParts = {}
+    if data.RAP and data.RAP > 0 then
+        table.insert(rapAlpParts, "RAP: " .. FormatCompact(data.RAP))
+    else table.insert(rapAlpParts, "RAP: -") end
+    if data.ALP and data.ALP.avg and data.ALP.avg > 0 then
+        table.insert(rapAlpParts, string.format("ALP: %s", FormatCompact(data.ALP.avg)))
+    end
+
+    local RapAlpLabel = Instance.new("TextLabel")
+    RapAlpLabel.Size = UDim2.new(0, 220, 0, 12); RapAlpLabel.Position = UDim2.new(0, 42, 0, 40)
+    RapAlpLabel.BackgroundTransparency = 1; RapAlpLabel.Text = table.concat(rapAlpParts, " │ ")
+    RapAlpLabel.TextColor3 = COLORS.textMuted; RapAlpLabel.TextXAlignment = Enum.TextXAlignment.Left
+    RapAlpLabel.Font = Enum.Font.Gotham; RapAlpLabel.TextSize = 9; RapAlpLabel.Parent = card
+
+    -- Quick price presets
+    local suggestedPrice = 1
+    local pctVal = tonumber(PricePctBox.Text) or DEFAULT_PRICE_PCT
+    local rapVal = data.RAP or 0
+    local alpVal = (data.ALP and data.ALP.avg) or 0
+    if rapVal > 0 then suggestedPrice = math.floor(rapVal * pctVal / 100)
+    elseif alpVal > 0 then suggestedPrice = math.floor(alpVal * pctVal / 100) end
+    if suggestedPrice < 1 then suggestedPrice = 1 end
+
+    -- Price input
+    local PriceInput = Instance.new("TextBox")
+    PriceInput.Size = UDim2.new(0, 65, 0, 24); PriceInput.Position = UDim2.new(1, -280, 0, 5)
+    PriceInput.BackgroundColor3 = COLORS.inputBg; PriceInput.Text = tostring(suggestedPrice)
+    PriceInput.PlaceholderText = "Harga"; PriceInput.PlaceholderColor3 = COLORS.textMuted
+    PriceInput.TextColor3 = COLORS.gold; PriceInput.Font = Enum.Font.GothamSemibold
+    PriceInput.TextSize = 11; PriceInput.ClearTextOnFocus = true; PriceInput.BorderSizePixel = 0
+    PriceInput.Parent = card
+    Instance.new("UICorner", PriceInput).CornerRadius = UDim.new(0, 4)
+
+    local TokenSuffix = Instance.new("TextLabel")
+    TokenSuffix.Size = UDim2.new(0, 14, 0, 24); TokenSuffix.Position = UDim2.new(1, -213, 0, 5)
+    TokenSuffix.BackgroundTransparency = 1; TokenSuffix.Text = "T"
+    TokenSuffix.TextColor3 = COLORS.textDim; TokenSuffix.Font = Enum.Font.GothamBold
+    TokenSuffix.TextSize = 10; TokenSuffix.Parent = card
+
+    -- Quick price preset buttons
+    local presetX = 0
+    local presets = {}
+    if rapVal > 0 then
+        table.insert(presets, {label = "RAP", val = rapVal})
+        table.insert(presets, {label = "90%", val = math.floor(rapVal * 0.9)})
+        table.insert(presets, {label = "80%", val = math.floor(rapVal * 0.8)})
+    end
+    if alpVal > 0 then
+        table.insert(presets, {label = "ALP", val = math.floor(alpVal)})
+    end
+
+    for pi, preset in ipairs(presets) do
+        if pi > 4 then break end
+        local pbtn = Instance.new("TextButton")
+        pbtn.Size = UDim2.new(0, 28, 0, 14); pbtn.Position = UDim2.new(1, -280 + presetX, 0, 34)
+        pbtn.BackgroundColor3 = COLORS.searchBg; pbtn.Text = preset.label
+        pbtn.Font = Enum.Font.GothamSemibold; pbtn.TextSize = 7; pbtn.TextColor3 = COLORS.textDim
+        pbtn.AutoButtonColor = false; pbtn.BorderSizePixel = 0; pbtn.Parent = card
+        Instance.new("UICorner", pbtn).CornerRadius = UDim.new(0, 4)
+        local pval = preset.val
+        pbtn.MouseEnter:Connect(function() Tween(pbtn, {BackgroundColor3 = COLORS.accent, TextColor3 = Color3.new(1,1,1)}, 0.1) end)
+        pbtn.MouseLeave:Connect(function() Tween(pbtn, {BackgroundColor3 = COLORS.searchBg, TextColor3 = COLORS.textDim}, 0.1) end)
+        pbtn.MouseButton1Click:Connect(function()
+            PriceInput.Text = tostring(math.max(1, pval))
+        end)
+        presetX = presetX + 31
+    end
+
+    -- List button
+    local ListBtn = Instance.new("TextButton")
+    ListBtn.Size = UDim2.new(0, 75, 0, 30); ListBtn.Position = UDim2.new(1, -125, 0.5, -15)
+    ListBtn.BackgroundColor3 = isListed and COLORS.textMuted or COLORS.green
+    ListBtn.Text = isListed and "✅ Listed" or "💰 List"
+    ListBtn.Font = Enum.Font.GothamBold; ListBtn.TextSize = 11; ListBtn.TextColor3 = Color3.new(1,1,1)
+    ListBtn.AutoButtonColor = false; ListBtn.BorderSizePixel = 0; ListBtn.Parent = card
+    Instance.new("UICorner", ListBtn).CornerRadius = UDim.new(0, 6)
+
+    if not isListed then
+        ListBtn.MouseEnter:Connect(function() Tween(ListBtn, {BackgroundColor3 = COLORS.greenHover}, 0.15) end)
+        ListBtn.MouseLeave:Connect(function() Tween(ListBtn, {BackgroundColor3 = COLORS.green}, 0.15) end)
+    end
+
+    ListBtn.MouseButton1Click:Connect(function()
+        if isDialogOpen then return end
+        if isListed then StatusText.Text = "ℹ️ Item sudah di-list! Gunakan tab Booth untuk manage."; return end
+        local price = tonumber(PriceInput.Text)
+        if not price or price <= 0 then StatusText.Text = "❌ Harga tidak valid!"; return end
+
+        ShowConfirmDialog(
+            "💰 List Item",
+            string.format("List %s ke booth seharga %s T?", data.ItemName or "item", FormatNumber(price)),
+            function()
+                ListBtn.Text = "⏳..."; ListBtn.BackgroundColor3 = Color3.fromRGB(180, 150, 0)
+                StatusText.Text = "💰 Listing " .. (data.ItemName or "item") .. "..."
+                task.spawn(function()
+                    local ok, result = pcall(function()
+                        return TradeData.Remotes.CreateSaleListing:InvokeServer("Booth", data.ItemType, data.UUID, price)
+                    end)
+                    if ok then
+                        ListBtn.Text = "✅ Listed"; ListBtn.BackgroundColor3 = COLORS.textMuted
+                        StatusText.Text = "✅ " .. (data.ItemName or "item") .. " di-list seharga " .. FormatNumber(price) .. " T"
+                        data.IsListed = true; isListed = true
+                        card.BackgroundColor3 = Color3.fromRGB(35, 35, 28); RankLabel.Text = "🏪"
+                        UpdateTokenDisplay()
+                    else
+                        ListBtn.Text = "❌ Gagal"; ListBtn.BackgroundColor3 = COLORS.red
+                        StatusText.Text = "❌ Gagal list: " .. tostring(result)
+                        task.wait(2); ListBtn.Text = "💰 List"; ListBtn.BackgroundColor3 = COLORS.green
+                    end
+                end)
+            end
+        )
+    end)
+
+    -- Store reference for batch listing
+    card:SetAttribute("ItemUUID", data.UUID or "")
+    card:SetAttribute("IsListed", isListed)
+
+    -- Entry animation
+    card.Position = UDim2.new(0.3, 0, 0, 0); card.BackgroundTransparency = 0.5
+    Tween(card, {Position = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 0}, 0.3 + layoutOrder * 0.02)
+    return card
+end
+
+-- ==========================
+-- TAB SWITCHING
+-- ==========================
+local function SetTabActive(tab)
+    if tab == "booth" then
+        TabBooth.BackgroundColor3 = COLORS.tabActive; TabBooth.TextColor3 = Color3.new(1,1,1)
+        TabInventory.BackgroundColor3 = COLORS.tabInactive; TabInventory.TextColor3 = COLORS.textDim
+        ClearBoothBtn.Visible = true; BatchListBtn.Visible = false
+        PricePctLabel.Visible = false; PricePctBox.Visible = false; PricePctSuffix.Visible = false
+        CategoryBar.Visible = false
+        Scroll.Position = UDim2.new(0, 10, 0, SCROLL_Y_BOOTH)
+        Scroll.Size = UDim2.new(1, -20, 1, -160)
+    else
+        TabInventory.BackgroundColor3 = COLORS.tabActive; TabInventory.TextColor3 = Color3.new(1,1,1)
+        TabBooth.BackgroundColor3 = COLORS.tabInactive; TabBooth.TextColor3 = COLORS.textDim
+        ClearBoothBtn.Visible = false; BatchListBtn.Visible = true
+        PricePctLabel.Visible = true; PricePctBox.Visible = true; PricePctSuffix.Visible = true
+        CategoryBar.Visible = true
+        Scroll.Position = UDim2.new(0, 10, 0, SCROLL_Y_INV)
+        Scroll.Size = UDim2.new(1, -20, 1, -160 - CATEGORY_BAR_HEIGHT - 4)
+    end
+    currentTab = tab
+end
+
+-- ==========================
+-- LOAD BOOTH LISTINGS
+-- ==========================
+LoadBoothListings = function()
+    if isLoading then return end
+    if not requireOK then StatusText.Text = "⚠️ Modules tidak tersedia"; return end
+    isLoading = true
+    ClearScroll(); ShowLoading(true, "⏳ Memuat booth listings...")
+    StatusText.Text = "🔄 Memuat booth..."
+
+    task.spawn(function()
+        local success, err = pcall(function()
+            local boothListings = GetMyBoothListings()
+            if not boothListings or not next(boothListings) then
+                ShowLoading(false)
+                ShowEmpty("📭 Booth kamu kosong! Buka tab Inventory untuk list item.")
+                StatusText.Text = "✅ Booth kosong"
+                StatsText.Text = "0 listings"
+                SlotCounter.Text = "Slot: 0/" .. MAX_BOOTH_SLOTS
+                SlotCounter.TextColor3 = COLORS.green
+                isLoading = false; return
+            end
+
+            local entries = {}
+            local itemDefCache = {}
+            for listingKey, listingData in pairs(boothListings) do
+                if not listingData.Item then continue end
+                local cacheKey = tostring(listingData.ItemType or "") .. "_" .. tostring(listingData.Item.Id or "")
+                local itemDef = itemDefCache[cacheKey]
+                if itemDef == nil then
+                    local defOk, defVal = pcall(function() return ItemUtility.GetItemDataFromItemType(listingData.ItemType, listingData.Item.Id) end)
+                    itemDef = defOk and defVal or false; itemDefCache[cacheKey] = itemDef
+                end
+                if itemDef == false then itemDef = nil end
+                local itemName = itemDef and itemDef.Data and itemDef.Data.Name or tostring(listingData.Item.Id)
+                local itemTier = itemDef and itemDef.Data and itemDef.Data.Tier or 0
+                local itemIdStr = itemDef and itemDef.Data and tostring(itemDef.Data.Id) or tostring(listingData.Item.Id)
+                table.insert(entries, {
+                    ListingKey = listingKey, ItemName = itemName, ItemType = listingData.ItemType,
+                    ItemTier = itemTier, ItemIdStr = itemIdStr, Price = listingData.Price or 0,
+                    UUID = listingData.Item.UUID, RAP = nil, ALP = nil,
+                })
+            end
+
+            -- Update slot counter
+            local slotCount = #entries
+            SlotCounter.Text = "Slot: " .. slotCount .. "/" .. MAX_BOOTH_SLOTS
+            SlotCounter.TextColor3 = slotCount >= MAX_BOOTH_SLOTS and COLORS.red or (slotCount >= MAX_BOOTH_SLOTS - 2 and COLORS.orange or COLORS.green)
+
+            StatusText.Text = string.format("📊 %d listings. Fetching RAP/ALP...", #entries)
+            local done, total = 0, #entries
+            for i, entry in ipairs(entries) do
+                local idx = i
+                task.spawn(function()
+                    entries[idx].RAP = FetchRAPFromServer(entry.ItemType, entry.ItemIdStr) or 0
+                    entries[idx].ALP = GetAvgPrice(entry.ItemType, entry.ItemIdStr)
+                    done = done + 1
+                end)
+            end
+            local t0 = tick()
+            while done < total and (tick() - t0) < 8 do task.wait(0.05) end
+
+            -- Sort
+            SortEntries(entries)
+
+            boothEntries = entries; ShowLoading(false); ClearScroll()
+            if #entries == 0 then ShowEmpty("📭 Booth kosong!")
+            else for i, entry in ipairs(entries) do CreateBoothCard(entry, i) end end
+
+            task.wait(0.05)
+            Scroll.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+            local totalValue = 0
+            for _, e in ipairs(entries) do totalValue = totalValue + (e.Price or 0) end
+            StatusText.Text = string.format("✅ %d listings loaded", #entries)
+            StatsText.Text = string.format("%d items • Total: %sT", #entries, FormatCompact(totalValue))
+        end)
+
+        if not success then
+            ShowLoading(false); ShowEmpty("⚠️ Error: " .. tostring(err))
+            StatusText.Text = "❌ Error: " .. tostring(err):sub(1, 50)
+        end
+        isLoading = false
+    end)
+end
+
+-- ==========================
+-- FILTER & DISPLAY INVENTORY (lightweight, from cache)
+-- ==========================
+FilterAndDisplayInventory = function()
+    if #allItemsCache == 0 then
+        -- No cache yet, do a full load
+        if LoadInventory then LoadInventory() end
+        return
+    end
+
+    ClearScroll()
+    local searchQuery = SearchBox.Text:lower()
+    local entries = {}
+
+    for _, item in ipairs(allItemsCache) do
+        if currentCategory and item.ItemType ~= currentCategory then continue end
+        if searchQuery ~= "" then
+            local nm = item.ItemName:lower():find(searchQuery, 1, true)
+            local tp = item.ItemType:lower():find(searchQuery, 1, true)
+            local tr = (tierNames[item.ItemTier] or ""):lower():find(searchQuery, 1, true)
+            if not (nm or tp or tr) then continue end
+        end
+        table.insert(entries, item)
+    end
+
+    -- Sort (listed first, then by currentSort)
+    local listedEntries, unlistedEntries = {}, {}
+    for _, e in ipairs(entries) do
+        if e.IsListed then table.insert(listedEntries, e) else table.insert(unlistedEntries, e) end
+    end
+    SortEntries(listedEntries); SortEntries(unlistedEntries)
+    entries = {}
+    for _, e in ipairs(listedEntries) do table.insert(entries, e) end
+    for _, e in ipairs(unlistedEntries) do table.insert(entries, e) end
+
+    inventoryEntries = entries
+    if #entries == 0 then
+        ShowEmpty("📭 Tidak ada item" .. (searchQuery ~= "" and (" untuk '" .. searchQuery .. "'") or "") .. (currentCategory and (" di " .. currentCategory) or "") .. ".")
+    else
+        for i, entry in ipairs(entries) do CreateInventoryCard(entry, i) end
+    end
+
+    task.wait(0.05)
+    Scroll.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+    local listedCount = 0
+    for _, e in ipairs(entries) do if e.IsListed then listedCount = listedCount + 1 end end
+    StatusText.Text = string.format("✅ %d items", #entries)
+    StatsText.Text = string.format("%d items • %d listed", #entries, listedCount)
+end
+
+-- ==========================
+-- LOAD INVENTORY (heavy, fetches from Replion + RAP/ALP)
+-- ==========================
+LoadInventory = function()
+    if isLoading then return end
+    if not requireOK then StatusText.Text = "⚠️ Modules tidak tersedia"; return end
+    isLoading = true
+    ClearScroll(); ShowLoading(true, "⏳ Memuat inventory...")
+    StatusText.Text = "🔄 Memuat inventory..."
+
+    task.spawn(function()
+        local success, err = pcall(function()
+            local data = GetData()
+            if not data then
+                ShowLoading(false); ShowEmpty("⚠️ Gagal memuat Data Replion"); isLoading = false; return
+            end
+
+            local ok, inv = pcall(function() return data:GetExpect("Inventory") end)
+            if not ok or not inv then inv = data:Get("Inventory") end
+            if not inv then
+                ShowLoading(false); ShowEmpty("⚠️ Gagal membaca inventory"); isLoading = false; return
+            end
+
+            local boothListings = GetMyBoothListings()
+            local listedUUIDs = {}
+            for _, listing in pairs(boothListings) do
+                if listing.Item and listing.Item.UUID then listedUUIDs[listing.Item.UUID] = true end
+            end
+
+            local allItems = {}
+            local categoryCounts = {}
+
+            for cat, items in pairs(inv) do
+                if type(items) == "table" then
+                    for _, item in pairs(items) do
+                        if type(item) == "table" and item.UUID then
+                            local itemDef, name, itype, tier = nil, tostring(item.Id or "?"), cat, 0
+                            local ok1, d1 = pcall(function() return ItemUtility.GetItemDataFromItemType(cat, item.Id) end)
+                            if ok1 and d1 and d1.Data then
+                                name = d1.Data.Name; itype = d1.Data.Type or cat; tier = d1.Data.Tier or 0; itemDef = d1
+                            else
+                                local ok2, d2 = pcall(function() return ItemUtility.GetItemDataFromItemType(item.Id) end)
+                                if ok2 and d2 and d2.Data then
+                                    name = d2.Data.Name; itype = d2.Data.Type or cat; tier = d2.Data.Tier or 0; itemDef = d2
+                                end
+                            end
+                            local isListed = listedUUIDs[item.UUID] or false
+                            local itemIdStr = itemDef and itemDef.Data and tostring(itemDef.Data.Id) or tostring(item.Id)
+                            categoryCounts[itype] = (categoryCounts[itype] or 0) + 1
+                            table.insert(allItems, {
+                                UUID = item.UUID, ItemId = item.Id, ItemIdStr = itemIdStr,
+                                ItemName = name, ItemType = itype, ItemTier = tier,
+                                IsListed = isListed, RAP = nil, ALP = nil,
+                            })
+                        end
+                    end
+                end
+            end
+
+            -- Cache for fast filtering
+            allItemsCache = allItems
+            cachedCategoryCounts = categoryCounts
+            BuildCategoryButtons(categoryCounts)
+
+            -- Filter based on current category/search
+            local searchQuery = SearchBox.Text:lower()
+            local entries = {}
+            for _, item in ipairs(allItems) do
+                if currentCategory and item.ItemType ~= currentCategory then continue end
+                if searchQuery ~= "" then
+                    local nm = item.ItemName:lower():find(searchQuery, 1, true)
+                    local tp = item.ItemType:lower():find(searchQuery, 1, true)
+                    local tr = (tierNames[item.ItemTier] or ""):lower():find(searchQuery, 1, true)
+                    if not (nm or tp or tr) then continue end
+                end
+                table.insert(entries, item)
+            end
+
+            StatusText.Text = string.format("📊 %d items. Fetching RAP/ALP...", #entries)
+            -- Fetch RAP/ALP for ALL cached items (not just filtered), so switching category is instant
+            local fetchLimit = math.min(#allItems, 80)
+            local done = 0
+            for i = 1, fetchLimit do
+                local entry = allItems[i]; local idx = i
+                task.spawn(function()
+                    allItems[idx].RAP = FetchRAPFromServer(entry.ItemType, entry.ItemIdStr) or 0
+                    allItems[idx].ALP = GetAvgPrice(entry.ItemType, entry.ItemIdStr)
+                    done = done + 1
+                end)
+            end
+            local t0 = tick()
+            while done < fetchLimit and (tick() - t0) < 12 do task.wait(0.05) end
+
+            -- Re-filter after RAP/ALP loaded (entries may reference same objects)
+            entries = {}
+            for _, item in ipairs(allItems) do
+                if currentCategory and item.ItemType ~= currentCategory then continue end
+                if searchQuery ~= "" then
+                    local nm = item.ItemName:lower():find(searchQuery, 1, true)
+                    local tp = item.ItemType:lower():find(searchQuery, 1, true)
+                    local tr = (tierNames[item.ItemTier] or ""):lower():find(searchQuery, 1, true)
+                    if not (nm or tp or tr) then continue end
+                end
+                table.insert(entries, item)
+            end
+
+            -- Sort (listed first, then by currentSort)
+            local listedEntries, unlistedEntries = {}, {}
+            for _, e in ipairs(entries) do
+                if e.IsListed then table.insert(listedEntries, e) else table.insert(unlistedEntries, e) end
+            end
+            SortEntries(listedEntries); SortEntries(unlistedEntries)
+            entries = {}
+            for _, e in ipairs(listedEntries) do table.insert(entries, e) end
+            for _, e in ipairs(unlistedEntries) do table.insert(entries, e) end
+
+            inventoryEntries = entries; ShowLoading(false); ClearScroll()
+            if #entries == 0 then
+                ShowEmpty("📭 Tidak ada item" .. (searchQuery ~= "" and (" untuk '" .. searchQuery .. "'") or "") .. (currentCategory and (" di " .. currentCategory) or "") .. ".")
+            else
+                for i, entry in ipairs(entries) do CreateInventoryCard(entry, i) end
+            end
+
+            task.wait(0.05)
+            Scroll.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+            local listedCount = 0
+            for _, e in ipairs(entries) do if e.IsListed then listedCount = listedCount + 1 end end
+            StatusText.Text = string.format("✅ %d items loaded", #entries)
+            StatsText.Text = string.format("%d items • %d listed", #entries, listedCount)
+        end)
+
+        if not success then
+            ShowLoading(false); ShowEmpty("⚠️ Error: " .. tostring(err))
+            StatusText.Text = "❌ Error: " .. tostring(err):sub(1, 50)
+        end
+        isLoading = false
+    end)
+end
+
+-- ==========================
+-- BATCH LIST ALL
+-- ==========================
+BatchListBtn.MouseButton1Click:Connect(function()
+    if isLoading or isDialogOpen then return end
+
+    -- Count unlisted items visible
+    local unlistedCount = 0
+    for _, e in ipairs(inventoryEntries) do
+        if not e.IsListed then unlistedCount = unlistedCount + 1 end
+    end
+
+    if unlistedCount == 0 then
+        StatusText.Text = "ℹ️ Tidak ada item unlisted untuk di-list."
+        return
+    end
+
+    local pctVal = tonumber(PricePctBox.Text) or DEFAULT_PRICE_PCT
+
+    ShowConfirmDialog(
+        "📦 Batch List",
+        string.format("List %d item yang belum di-list\ndengan harga %d%% RAP/ALP?\n\nDelay: %ds per item.", unlistedCount, pctVal, LISTING_COOLDOWN),
+        function()
+            isLoading = true
+            BatchListBtn.Text = "⏳..."
+            StatusText.Text = "📦 Batch listing..."
+
+            task.spawn(function()
+                local listed, failed = 0, 0
+                for i, entry in ipairs(inventoryEntries) do
+                    if entry.IsListed then continue end
+
+                    local price = 1
+                    local rapV = entry.RAP or 0
+                    local alpV = (entry.ALP and entry.ALP.avg) or 0
+                    if rapV > 0 then price = math.floor(rapV * pctVal / 100)
+                    elseif alpV > 0 then price = math.floor(alpV * pctVal / 100) end
+                    if price < 1 then price = 1 end
+
+                    StatusText.Text = string.format("📦 Listing %d/%d: %s (%sT)...", listed + failed + 1, unlistedCount, entry.ItemName or "?", FormatCompact(price))
+
+                    local ok = pcall(function()
+                        return TradeData.Remotes.CreateSaleListing:InvokeServer("Booth", entry.ItemType, entry.UUID, price)
+                    end)
+
+                    if ok then
+                        listed = listed + 1
+                        entry.IsListed = true
+                    else
+                        failed = failed + 1
+                    end
+
+                    task.wait(LISTING_COOLDOWN)
+                end
+
+                StatusText.Text = string.format("✅ Batch done: %d listed, %d gagal", listed, failed)
+                BatchListBtn.Text = "📦 List Semua"
+                isLoading = false
+                UpdateTokenDisplay()
+
+                task.wait(1)
+                LoadInventory()
+            end)
+        end
+    )
+end)
+
+-- ==========================
+-- CLEAR ALL BOOTH
+-- ==========================
+ClearBoothBtn.MouseButton1Click:Connect(function()
+    if isLoading or isDialogOpen then return end
+
+    ShowConfirmDialog(
+        "🗑️ Clear All Booth",
+        "Hapus SEMUA listing dari booth kamu?\nSemua item akan kembali ke inventory.",
+        function()
+            isLoading = true
+            ClearBoothBtn.Text = "⏳..."
+            StatusText.Text = "🗑️ Menghapus semua listing..."
+
+            task.spawn(function()
+                local ls = GetMyBoothListings()
+                if not ls or not next(ls) then
+                    StatusText.Text = "ℹ️ Booth sudah kosong"
+                    ClearBoothBtn.Text = "🗑️ Clear"
+                    isLoading = false; return
+                end
+
+                local keys = {}
+                for k in pairs(ls) do table.insert(keys, k) end
+
+                for i, k in ipairs(keys) do
+                    StatusText.Text = string.format("🗑️ Menghapus %d/%d...", i, #keys)
+                    local ok, e = pcall(function() return TradeData.Remotes.DeleteSaleListing:InvokeServer("Booth", k) end)
+                    if not ok then warn("[SellerUI] Delete error:", e) end
+                    if i < #keys then task.wait(LISTING_COOLDOWN) end
+                end
+
+                StatusText.Text = string.format("✅ %d listing dihapus!", #keys)
+                ClearBoothBtn.Text = "🗑️ Clear"
+                isLoading = false
+                UpdateTokenDisplay()
+
+                task.wait(1)
+                LoadBoothListings()
+            end)
+        end
+    )
+end)
+
+-- ==========================
+-- TAB CLICK HANDLERS
+-- ==========================
+TabBooth.MouseButton1Click:Connect(function()
+    if currentTab == "booth" then return end
+    SetTabActive("booth"); LoadBoothListings()
+end)
+
+TabInventory.MouseButton1Click:Connect(function()
+    if currentTab == "inventory" then return end
+    SetTabActive("inventory"); LoadInventory()
+end)
+
+-- ==========================
+-- REFRESH
+-- ==========================
+RefreshBtn.MouseButton1Click:Connect(function()
+    rapCache = {}; alpCache = {}; lastCategories = nil; allItemsCache = {}
+    UpdateTokenDisplay()
+    if currentTab == "booth" then LoadBoothListings() else LoadInventory() end
+end)
+
+-- ==========================
+-- SEARCH DEBOUNCE
+-- ==========================
+local searchDebounce = nil
+SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    if currentTab ~= "inventory" then return end
+    if searchDebounce then task.cancel(searchDebounce) end
+    searchDebounce = task.delay(0.3, function()
+        FilterAndDisplayInventory(); searchDebounce = nil
+    end)
+end)
+
+-- ==========================
+-- KEYBOARD SHORTCUTS
+-- ==========================
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if isDialogOpen then return end
+
+    if input.KeyCode == Enum.KeyCode.Escape then
+        if not isMinimized and MainFrame.Visible then
+            MinimizeToWindow()
+        end
+    elseif input.KeyCode == Enum.KeyCode.R then
+        -- Only refresh if not typing in a TextBox
+        local focused = UserInputService:GetFocusedTextBox()
+        if not focused then
+            rapCache = {}; alpCache = {}; lastCategories = nil; allItemsCache = {}
+            UpdateTokenDisplay()
+            if currentTab == "booth" then LoadBoothListings() else LoadInventory() end
+        end
+    end
+end)
+
+-- ==========================
+-- INITIAL LOAD
+-- ==========================
+MainFrame.Size = UDim2.new(0, 0, 0, 0)
+MainFrame.BackgroundTransparency = 1
+Tween(MainFrame, {Size = UDim2.new(0, 640, 0, 580), BackgroundTransparency = 0}, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+task.wait(0.5)
+
+SetTabActive("booth")
+LoadBoothListings()
+UpdateTokenDisplay()
+
+print("[SellerUI] Plaza Booth Seller Manager v2.0 loaded! 💰")
+print("[SellerUI] Shortcuts: Esc=Minimize, R=Refresh")
+ 
